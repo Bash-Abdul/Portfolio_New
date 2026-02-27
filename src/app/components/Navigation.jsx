@@ -153,7 +153,7 @@ export function Navigation() {
             animate={{ scaleX: 0.9 }}
             exit={{ scaleX: 1, opacity: 0 }}
             transition={{ duration: 0.4 }}
-            className="fixed top-0 left-0 right-0 z-[100] h-0.5 bg-black dark:bg-white"
+            className="fixed top-0 left-0 right-0 z-100 h-0.5 bg-black dark:bg-white"
           />
         )}
       </AnimatePresence>
@@ -167,7 +167,7 @@ export function Navigation() {
             : "bg-white/80 dark:bg-neutral-900/80 backdrop-blur-md shadow-sm"
         }`}
       >
-        <div className="max-w-[1400px] mx-auto px-6">
+        <div className="max-w-350 mx-auto px-6">
           <div className="flex items-center justify-between py-6">
             <Link
               to="/"
@@ -175,7 +175,7 @@ export function Navigation() {
                 isDarkNav ? "text-white" : "text-black dark:text-white"
               }`}
             >
-              Bashir
+              Bashir.
             </Link>
 
             {/* Desktop Navigation */}
@@ -249,9 +249,9 @@ export function Navigation() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
-            className="fixed top-[88px] left-0 right-0 z-40 bg-white dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800 md:hidden"
+            className="fixed top-22 left-0 right-0 z-40 bg-white dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800 md:hidden"
           >
-            <div className="max-w-[1400px] mx-auto px-6 py-6">
+            <div className="max-w-350 mx-auto px-6 py-6">
               <nav className="flex flex-col gap-4">
                 <Link
                   to="/projects"

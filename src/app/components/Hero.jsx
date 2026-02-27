@@ -154,7 +154,7 @@ export function Hero() {
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl" />
       </motion.div>
 
-      <div className="relative z-10 px-6 w-full max-w-[1400px]">
+      <div className="relative z-10 px-6 w-full max-w-350">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -258,7 +258,7 @@ export function Hero() {
             <motion.div
               animate={{ y: [0, 8, 0] }}
               transition={{ duration: 1.5, repeat: Infinity }}
-              className="w-px h-16 bg-gradient-to-b from-transparent via-neutral-600 to-transparent"
+              className="w-px h-16 bg-linear-to-b from-transparent via-neutral-600 to-transparent"
             />
           </div>
         </motion.div>
