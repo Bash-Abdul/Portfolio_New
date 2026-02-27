@@ -59,7 +59,7 @@ function ProjectCard({ project, index }) {
       whileInView={{ opacity: 1 }}
       viewport={{ once: true, margin: "-100px" }}
       transition={{ duration: 0.6, delay: index * 0.1 }}
-      className="group cursor-pointer border-t border-neutral-300 py-12 relative"
+      className="group cursor-pointer border-t border-neutral-300 dark:border-neutral-700 py-12 relative"
     >
       <div className="grid md:grid-cols-12 gap-8 items-start">
         <div className="md:col-span-2">
@@ -79,7 +79,7 @@ function ProjectCard({ project, index }) {
         </div>
 
         <div className="md:col-span-5">
-          <motion.div style={{ y }} className="relative overflow-hidden aspect-[4/3] bg-neutral-900">
+          <motion.div style={{ y }} className="relative overflow-hidden aspect-4/3 bg-neutral-900">
             <ImageWithFallback
               src={project.image}
               alt={project.title}
@@ -99,7 +99,7 @@ function ProjectCard({ project, index }) {
 export function Projects() {
   return (
     <section id="work" className="bg-neutral-50 dark:bg-neutral-800 py-32 md:py-48">
-      <div className="max-w-[1400px] mx-auto px-6">
+      <div className="max-w-350 mx-auto px-6">
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -115,9 +115,14 @@ export function Projects() {
           </h2>
         </motion.div>
 
-        <div>
+        {/* <div>
           {projects.map((project, index) => (
             <ProjectCard key={project.title} project={project} index={index} />
+          ))}
+        </div> */}
+          <div>
+          {projects.slice(0, 3).map((project, index) => (
+            <ProjectCard key={project.id} project={project} index={index} />
           ))}
         </div>
 

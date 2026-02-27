@@ -70,14 +70,14 @@ export function About() {
             >
               <div>
                 <div className="flex items-baseline gap-4 mb-2">
-                  <span className="text-6xl md:text-7xl dark:text-white">5+</span>
+                  <span className="text-6xl md:text-7xl dark:text-white">2+</span>
                   <span className="text-neutral-500 dark:text-neutral-400">Years</span>
                 </div>
                 <p className="text-neutral-600 dark:text-neutral-300">of professional experience</p>
               </div>
               <div>
                 <div className="flex items-baseline gap-4 mb-2">
-                  <span className="text-6xl md:text-7xl dark:text-white">50+</span>
+                  <span className="text-6xl md:text-7xl dark:text-white">10+</span>
                   <span className="text-neutral-500 dark:text-neutral-400">Projects</span>
                 </div>
                 <p className="text-neutral-600 dark:text-neutral-300">successfully delivered</p>
