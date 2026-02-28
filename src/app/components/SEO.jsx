@@ -17,6 +17,7 @@ export default function SEO({
   // url = SITE_URL, 
   url = '/',         // can pass "/" or "/about" from pages
   noindex = false,
+  twitterHandle = "@bash__abdul",
   sameAs = [
     "https://github.com/Bash-Abdul",
     "https://www.linkedin.com/in/bashir-abdulah-54086333a/",
@@ -72,8 +73,13 @@ export default function SEO({
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={image} />
-      {twitterHandle && <meta name="twitter:site" content={twitterHandle} />}
-      {twitterHandle && <meta name="twitter:creator" content={twitterHandle} />}
+       {/* only render twitter tags if it's a non-empty string */}
+       {typeof twitterHandle === "string" && twitterHandle.trim() !== "" ? (
+        <>
+          <meta name="twitter:site" content={twitterHandle} />
+          <meta name="twitter:creator" content={twitterHandle} />
+        </>
+      ) : null}
 
       {/* JSON-LD */}
       <script type="application/ld+json">
