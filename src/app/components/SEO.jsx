@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet-async";
 
 // const SITE_URL = "https://bashabdul.com";
 const SITE_URL = "https://bashabdul.com";
-const SITE_NAME = "Bashir Abdulah" || "bashabdul.com";
+const SITE_NAME = "Bashir Abdulah";
 
 const DEFAULT_TITLE = "Bashir Abdulah, React Frontend Developer";
 const DEFAULT_DESC =
