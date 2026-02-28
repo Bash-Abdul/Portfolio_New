@@ -2,7 +2,7 @@ import React from "react";
 import { Helmet } from "react-helmet-async";
 
 // const SITE_URL = "https://bashabdul.com";
-const SITE_URL = "https://bashabdul.vercel.app";
+const SITE_URL = "https://bashabdul.com";
 const DEFAULT_TITLE = "Bashir Abdulah, React Frontend Developer";
 const DEFAULT_DESC =
   "Portfolio of Bashir Abdulah, React frontend developer building modern, responsive web apps with clean UI, accessibility, and performance.";

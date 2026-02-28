@@ -180,6 +180,16 @@ export function Navigation() {
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center gap-6">
+
+            <Link
+                to="/about"
+                className={`text-sm hover:opacity-60 transition-opacity ${
+                  isDarkNav ? "text-white" : "text-black dark:text-white"
+                }`}
+              >
+                About
+              </Link>
+              
               <Link
                 to="/projects"
                 className={`text-sm hover:opacity-60 transition-opacity ${
@@ -188,14 +198,7 @@ export function Navigation() {
               >
                 Work
               </Link>
-              <Link
-                to="/about"
-                className={`text-sm hover:opacity-60 transition-opacity ${
-                  isDarkNav ? "text-white" : "text-black dark:text-white"
-                }`}
-              >
-                About
-              </Link>
+              
               <Link
                 to="/blog"
                 className={`text-sm hover:opacity-60 transition-opacity ${
