@@ -65,7 +65,7 @@ export default function AboutPage() {
       
       {/* Hero Section */}
       <section className="pt-32 pb-24 md:pt-48 md:pb-32 px-6">
-        <div className="max-w-[1400px] mx-auto">
+        <div className="max-w-350 mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
@@ -83,7 +83,7 @@ export default function AboutPage() {
 
       {/* Story Section */}
       <section className="py-24 px-6 bg-neutral-50 dark:bg-neutral-800">
-        <div className="max-w-[1400px] mx-auto">
+        <div className="max-w-350 mx-auto">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <motion.div
               initial={{ opacity: 0, x: -40 }}
@@ -111,7 +111,7 @@ export default function AboutPage() {
               transition={{ duration: 0.8 }}
               className="relative"
             >
-              <div className="aspect-[3/4] relative overflow-hidden bg-neutral-900">
+              <div className="aspect-3/4 relative overflow-hidden bg-neutral-900">
                 <ImageWithFallback
                   src="https://images.unsplash.com/photo-1566915896913-549d796d2166?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb2RpbmclMjBkZXZlbG9wZXIlMjB3b3Jrc3BhY2V8ZW58MXx8fHwxNzcxOTg1MzY3fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
                   alt="Workspace"
@@ -125,7 +125,7 @@ export default function AboutPage() {
 
       {/* Timeline Section */}
       <section className="py-24 md:py-32 px-6">
-        <div className="max-w-[1400px] mx-auto">
+        <div className="max-w-350 mx-auto">
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
@@ -147,7 +147,7 @@ export default function AboutPage() {
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 className="border-l-2 border-neutral-300 pl-8 pb-12 relative"
               >
-                <div className="absolute left-0 top-0 w-4 h-4 bg-black rounded-full -translate-x-[9px]" />
+                <div className="absolute left-0 top-0 w-4 h-4 bg-black rounded-full -translate-x-2.25" />
                 <span className="text-sm text-neutral-500 font-mono">{item.year}</span>
                 <h3 className="text-2xl md:text-3xl mt-2 mb-1">{item.title}</h3>
                 <p className="text-lg text-neutral-600 mb-3">{item.company}</p>
@@ -160,7 +160,7 @@ export default function AboutPage() {
 
       {/* Values Section */}
       <section className="py-24 px-6 bg-neutral-50 dark:bg-neutral-800">
-        <div className="max-w-[1400px] mx-auto">
+        <div className="max-w-350 mx-auto">
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}

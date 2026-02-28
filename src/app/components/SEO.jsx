@@ -3,6 +3,8 @@ import { Helmet } from "react-helmet-async";
 
 // const SITE_URL = "https://bashabdul.com";
 const SITE_URL = "https://bashabdul.com";
+const SITE_NAME = "Bashir Abdulah" || "bashabdul.com";
+
 const DEFAULT_TITLE = "Bashir Abdulah, React Frontend Developer";
 const DEFAULT_DESC =
   "Portfolio of Bashir Abdulah, React frontend developer building modern, responsive web apps with clean UI, accessibility, and performance.";
@@ -12,7 +14,8 @@ export default function SEO({
   title = DEFAULT_TITLE,
   description = DEFAULT_DESC,
   image = DEFAULT_IMAGE,
-  url = SITE_URL,          // can pass "/" or "/about" from pages
+  // url = SITE_URL, 
+  url = '/',         // can pass "/" or "/about" from pages
   noindex = false,
   sameAs = [
     "https://github.com/Bash-Abdul",
@@ -23,14 +26,19 @@ export default function SEO({
     // "dgdggdgd"
   ],
 }) {
-  const canonical = url.startsWith("http") ? url : `${SITE_URL}${url}`;
+  // const canonical = url.startsWith("http") ? url : `${SITE_URL}${url}`;
+  const canonical = new URL(url, SITE_URL).toString();
+
   const ldPerson = {
     "@context": "https://schema.org",
     "@type": "Person",
+    "@id": `${SITE_URL}/#me`,
     name: "Bashir Abdulah",
     alternateName: "Bash Abdul",
     url: SITE_URL,
     jobTitle: "Frontend Developer",
+    description,
+    image,
     sameAs,
   };
 
@@ -49,16 +57,23 @@ export default function SEO({
       <meta property="og:description" content={description} />
       <meta property="og:type" content="website" />
       <meta property="og:url" content={canonical} />
-      <meta property="og:site_name" content="bashabdul.vercel.app" />
+      {/* <meta property="og:site_name" content="bashabdul.com" /> */}
+      <meta property="og:site_name" content={SITE_NAME} />
       <meta property="og:image" content={image} />
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="630" />
+      <meta
+        property="og:image:alt"
+        content="Preview image for Bashir Abdulah's portfolio"
+      />
 
       {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={image} />
+      {twitterHandle && <meta name="twitter:site" content={twitterHandle} />}
+      {twitterHandle && <meta name="twitter:creator" content={twitterHandle} />}
 
       {/* JSON-LD */}
       <script type="application/ld+json">
