@@ -96,6 +96,7 @@ import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate, useNavigation } from "react-router";
 import { ThemeToggle } from "./ThemeToggle";
 import { Menu, X } from "lucide-react";
+import heroImage from '../assets/hero.png'
 
 export function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -122,7 +123,7 @@ export function Navigation() {
 
   const isHomePage = location.pathname === "/";
   const darkNav = isHomePage || location.pathname === "/projects"
-  
+
   // On home page, navbar is dark when at hero, light after scrolling
   // On other pages, navbar is always light
   const isDarkNav = darkNav && !isScrolled;
@@ -161,49 +162,46 @@ export function Navigation() {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.6, delay: 0.2 }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          isDarkNav
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isDarkNav
             ? "bg-transparent"
             : "bg-white/80 dark:bg-neutral-900/80 backdrop-blur-md shadow-sm"
-        }`}
+          }`}
       >
         <div className="max-w-350 mx-auto px-6">
           <div className="flex items-center justify-between py-6">
             <Link
               to="/"
-              className={`text-2xl md:text-3xl tracking-tight transition-colors duration-300 ${
-                isDarkNav ? "text-white" : "text-black dark:text-white"
-              }`}
+              className={`text-2xl md:text-3xl tracking-tight transition-colors duration-300 ${isDarkNav ? "text-white" : "text-black dark:text-white"
+                }`}
             >
-              Bashir.
+              {/* Bashir. */}
+              <img src={heroImage} alt="BA" width={80} height={80} loading="lazy"
+                decoding="async" />
             </Link>
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center gap-6">
 
-            <Link
+              <Link
                 to="/about"
-                className={`text-sm hover:opacity-60 transition-opacity ${
-                  isDarkNav ? "text-white" : "text-black dark:text-white"
-                }`}
+                className={`text-sm hover:opacity-60 transition-opacity ${isDarkNav ? "text-white" : "text-black dark:text-white"
+                  }`}
               >
                 About
               </Link>
-              
+
               <Link
                 to="/projects"
-                className={`text-sm hover:opacity-60 transition-opacity ${
-                  isDarkNav ? "text-white" : "text-black dark:text-white"
-                }`}
+                className={`text-sm hover:opacity-60 transition-opacity ${isDarkNav ? "text-white" : "text-black dark:text-white"
+                  }`}
               >
                 Work
               </Link>
-              
+
               <Link
                 to="/blog"
-                className={`text-sm hover:opacity-60 transition-opacity ${
-                  isDarkNav ? "text-white" : "text-black dark:text-white"
-                }`}
+                className={`text-sm hover:opacity-60 transition-opacity ${isDarkNav ? "text-white" : "text-black dark:text-white"
+                  }`}
               >
                 Blog
               </Link>
@@ -211,11 +209,10 @@ export function Navigation() {
               <a
                 href="#contact"
                 onClick={handleContactClick}
-                className={`px-6 py-3 border transition-all duration-300 cursor-pointer ${
-                  isDarkNav
+                className={`px-6 py-3 border transition-all duration-300 cursor-pointer ${isDarkNav
                     ? "border-white text-white hover:bg-white hover:text-black"
                     : "border-black dark:border-white text-black dark:text-white hover:bg-black dark:hover:bg-white hover:text-white dark:hover:text-black"
-                }`}
+                  }`}
               >
                 Contact
               </a>
@@ -226,11 +223,10 @@ export function Navigation() {
               <ThemeToggle isScrolled={!isDarkNav} isHomePage={isHomePage} />
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className={`p-2 transition-colors duration-300 ${
-                  isDarkNav
+                className={`p-2 transition-colors duration-300 ${isDarkNav
                     ? "text-white hover:text-neutral-300"
                     : "text-black dark:text-white hover:text-neutral-600 dark:hover:text-neutral-300"
-                }`}
+                  }`}
                 aria-label="Toggle menu"
               >
                 {isMobileMenuOpen ? (
