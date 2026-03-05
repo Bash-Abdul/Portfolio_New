@@ -1,5 +1,5 @@
 import { RouterProvider } from "react-router";
-import { router } from "./routes";
+import { router } from "./routes.jsx";
 import { ThemeProvider } from "./components/ThemeProvider";
 // import { Analytics } from "@vercel/analytics/next"
 
