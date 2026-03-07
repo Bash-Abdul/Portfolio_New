@@ -113,6 +113,8 @@ import { motion } from 'motion/react'
 import { useProjectsCount } from '../../../hooks/useProjects'
 import { useBlogCount, useLastSynced, useSyncBlog, useBlogPosts } from '../../../hooks/useBlogs'
 import { useRecentActivity } from '../../../hooks/useActivity'
+import { useJobCounts } from '../../../hooks/useJobs'
+import { useBoardCounts } from '../../../hooks/useBoard'
 // import { useBlogPosts } from '../../hooks/useBlog'
 
 export default function DashboardOverview() {
@@ -120,12 +122,16 @@ export default function DashboardOverview() {
   const { data: blogCounts, isLoading: loadingBlog } = useBlogCount()
   const { data: postsData } = useBlogPosts({ limit: 50 })
   const { data: activityData } = useRecentActivity()
+  const { data: jobCountsData } = useJobCounts()
+  const { data: boardCountsData } = useBoardCounts()
   const syncBlog = useSyncBlog()
 
   const projects = projectCounts?.data ?? {}
   const blog = blogCounts?.data ?? {}
   const posts = postsData?.data ?? []
   const recentActivity = activityData?.data ?? []
+  const jobCounts = jobCountsData?.data ?? {}
+  const boardCounts = boardCountsData?.data ?? {}
 
   const lastSynced = posts[0]?.synced_at
     ? new Date(posts[0].synced_at).toLocaleString()
@@ -144,15 +150,11 @@ export default function DashboardOverview() {
       label: 'Published Posts',
       value: isLoading ? '...' : (blog.total ?? 0)
     },
-    {
-      icon: Briefcase,
-      label: 'Open Applications',
-      value: 0
-    },
+    { icon: Briefcase, label: 'Open Applications', value: jobCounts.applied ?? 0 },
     {
       icon: CheckCircle,
       label: 'Active Tickets',
-      value: 0
+      value: boardCounts.active_tickets ?? 0
     }
   ]
 
@@ -169,6 +171,7 @@ export default function DashboardOverview() {
     { label: 'Add Project', onClick: () => window.location.href = '/dashboard/projects' },
     { label: 'Sync Hashnode', onClick: () => syncBlog.mutate() },
     { label: 'Add Application', onClick: () => window.location.href = '/dashboard/jobs' },
+    { label: 'New Ticket',       onClick: () => window.location.href = '/dashboard/board' },
   ]
 
   return (
@@ -261,6 +264,12 @@ export default function DashboardOverview() {
                   <span className="text-neutral-600 dark:text-neutral-400">Draft projects:</span>
                   <span className="font-medium dark:text-white">
                     {isLoading ? '...' : (projects.draft ?? 0)}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-neutral-600 dark:text-neutral-400">Board projects:</span>
+                  <span className="font-medium dark:text-white">
+                    {boardCounts.total_projects ?? 0}
                   </span>
                 </div>
               </div>
