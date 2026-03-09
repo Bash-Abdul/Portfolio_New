@@ -4,6 +4,7 @@ import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { Contact } from "../components/Contact";
 // import {SEO} from '../components/SEO'
 import SEO from "../components/SEO";
+import { Chatbot } from "../components/Chatbot";
 
 const timeline = [
   {
@@ -191,6 +192,7 @@ export default function AboutPage() {
       </section>
 
       <Contact />
+      <Chatbot />
     </div>
   );
 }

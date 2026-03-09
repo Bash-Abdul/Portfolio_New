@@ -189,6 +189,7 @@ import {
   useUpdateBoardProject,
   useDeleteBoardProject
 } from '../../../hooks/useBoard'
+import { useIsAdmin } from '../../../hooks/useIsAdmin'
 
 const COLORS = [
   'bg-blue-500', 'bg-purple-500', 'bg-green-500',
@@ -207,6 +208,7 @@ export default function DashboardBoard() {
   const createProject = useCreateBoardProject()
   const updateProject = useUpdateBoardProject()
   const deleteProject = useDeleteBoardProject()
+  const isAdmin = useIsAdmin()
 
   const projects = data?.data ?? []
 
@@ -251,7 +253,8 @@ export default function DashboardBoard() {
   const actions = (
     <button
       onClick={() => setIsModalOpen(true)}
-      className="px-6 py-3 bg-black dark:bg-white text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-colors flex items-center gap-2"
+      disabled={!isAdmin}
+      className="px-6 py-3 bg-black dark:bg-white text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
     >
       <Plus className="w-4 h-4" />
       New Project
@@ -313,18 +316,20 @@ export default function DashboardBoard() {
 
                   <div className="flex items-center justify-between pt-4 border-t border-neutral-200 dark:border-neutral-700">
                     <span className="text-sm text-neutral-600 dark:text-neutral-400">
-                      {project.ticket_count} {project.ticket_count === 1 ? 'ticket' : 'tickets'}
+                      {isAdmin ? project.ticket_count : '##'} {project.ticket_count === 1 ? 'ticket' : 'tickets'}
                     </span>
                     <div className="flex items-center gap-2">
                       <button
                         onClick={(e) => handleEdit(e, project)}
-                        className="p-1.5 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
+                        disabled={!isAdmin}
+                        className="p-1.5 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <Edit className="w-4 h-4 dark:text-white" />
                       </button>
                       <button
                         onClick={(e) => handleDelete(e, project.id)}
-                        className="p-1.5 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
+                        disabled={!isAdmin}
+                        className="p-1.5 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <Trash2 className="w-4 h-4 text-red-600" />
                       </button>
@@ -350,7 +355,7 @@ export default function DashboardBoard() {
               </button>
               <button
                 onClick={handleSubmit}
-                disabled={createProject.isPending || updateProject.isPending}
+                disabled={createProject.isPending || updateProject.isPending || !isAdmin}
                 className="px-6 py-3 bg-black dark:bg-white text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-colors disabled:opacity-50"
               >
                 {createProject.isPending || updateProject.isPending

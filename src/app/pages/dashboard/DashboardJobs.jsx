@@ -323,6 +323,7 @@ import { EmptyState } from '../../components/dashboard/EmptyState'
 import { Plus, Edit, Trash2, ExternalLink, Briefcase, Calendar, Building2, Loader2 } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useJobs, useJobCounts, useCreateJob, useUpdateJob, useDeleteJob } from '../../../hooks/useJobs'
+import {useIsAdmin} from '../../../hooks/useIsAdmin'
 
 const statusConfig = {
   applied:   { variant: 'pending',   label: 'Applied' },
@@ -356,6 +357,7 @@ export default function DashboardJobs() {
   const createJob                     = useCreateJob()
   const updateJob                     = useUpdateJob()
   const deleteJob                     = useDeleteJob()
+  const isAdmin = useIsAdmin()
 
   const jobs   = data?.data ?? []
   const counts = countsData?.data ?? {}
@@ -408,7 +410,8 @@ export default function DashboardJobs() {
   const actions = (
     <button
       onClick={() => setIsModalOpen(true)}
-      className="px-6 py-3 bg-black dark:bg-white text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-colors flex items-center gap-2"
+      disabled={!isAdmin}
+      className="px-6 py-3 bg-black dark:bg-white text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
     >
       <Plus className="w-4 h-4" />
       Add Application
@@ -522,8 +525,8 @@ export default function DashboardJobs() {
                     {job.job_url && (
                       <a
                       
-                        href={job.job_url}
-                        target="_blank"
+                        href={isAdmin ? job.job_url : ''}
+                        target={isAdmin ? "_blank" : ''}
                         rel="noopener noreferrer"
                         className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
                       >
@@ -532,13 +535,15 @@ export default function DashboardJobs() {
                     )}
                     <button
                       onClick={() => handleEdit(job)}
-                      className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
+                      disabled={!isAdmin}
+                      className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <Edit className="w-5 h-5 dark:text-white" />
                     </button>
                     <button
                       onClick={() => handleDelete(job.id)}
-                      className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
+                      disabled={!isAdmin}
+                      className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <Trash2 className="w-5 h-5 text-red-600" />
                     </button>

@@ -6,6 +6,7 @@ import { ExternalLink, Github, Loader2 } from "lucide-react";
 import SEO from "../components/SEO";
 import { useLocation } from 'react-router'
 import { usePublishedProjects } from "../../hooks/useProjects";
+import { Chatbot } from "../components/Chatbot";
 
 export default function ProjectsPage() {
   const location = useLocation()
@@ -191,6 +192,7 @@ export default function ProjectsPage() {
       </section>
 
       <Contact />
+      <Chatbot />
     </div>
   )
 

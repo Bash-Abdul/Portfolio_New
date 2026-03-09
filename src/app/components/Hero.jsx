@@ -121,6 +121,7 @@
 
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
+import { Link } from "react-router";
 
 export function Hero() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -237,9 +238,9 @@ export function Hero() {
             >
               <span className="relative z-10">View Resume</span>
               <div className="absolute inset-0 bg-neutral-800 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300" />
-              <span className="absolute inset-0 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <a href="https://docs.google.com/document/d/1kUchRo2DDm0-5p1RkfBp-9Ho1OHe8MGn-rCOMSdj58c/edit?usp=sharing" target="_blank" className="absolute inset-0 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 View Resume
-              </span>
+              </a>
             </a>
           </motion.div>
         </div>

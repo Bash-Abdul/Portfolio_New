@@ -149,10 +149,12 @@ import { EmptyState } from '../../components/dashboard/EmptyState'
 import { FileText, ExternalLink, Loader2 } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useBlogPosts, useSyncBlog } from '../../../hooks/useBlogs'
+import { useIsAdmin } from '../../../hooks/useIsAdmin'
 
 export default function DashboardBlog() {
   const { data, isLoading, isError } = useBlogPosts({ limit: 50 })
   const syncBlog = useSyncBlog()
+  const isAdmin = useIsAdmin()
 
   const posts = data?.data ?? []
 
@@ -302,7 +304,8 @@ export default function DashboardBlog() {
                     href={post.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-sm hover:underline dark:text-white">
+                    onClick={e => !isAdmin && e.preventDefault()}
+                    className={!isAdmin ? 'opacity-50 cursor-not-allowed pointer-events-none' : "inline-flex items-center gap-2 text-sm hover:underline dark:text-white"}>
                     
                       View on Hashnode
                       <ExternalLink className="w-4 h-4" />

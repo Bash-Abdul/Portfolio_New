@@ -11,11 +11,13 @@ import {
   X,
   LogOut,
   Briefcase,
-  Kanban
+  Kanban,
+  BookOpen
 } from "lucide-react";
 import { ThemeToggle } from "../ThemeToggle";
 import heroImage from '../../assets/hero.png'
 import { useLogout } from "../../../hooks/useAuth";
+import { Chatbot } from "../Chatbot";
 
 // interface DashboardLayoutProps {
 //   children: ReactNode;
@@ -30,6 +32,7 @@ const navItems = [
   { path: "/dashboard/github", label: "GitHub", icon: Github },
   { path: "/dashboard/jobs", label: "Jobs", icon: Briefcase },
   { path: "/dashboard/board", label: "Board", icon: Kanban },
+  { path: "/dashboard/logs", label: "Weekly Logs", icon: BookOpen },
 ];
 
 export function DashboardLayout({ children, title, actions }) {
@@ -218,6 +221,7 @@ export function DashboardLayout({ children, title, actions }) {
         {/* Page Content */}
         <main className="p-6">{children}</main>
       </div>
+      <Chatbot />
     </div>
   );
 }

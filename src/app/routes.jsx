@@ -197,5 +197,14 @@ export const router = createBrowserRouter([
       return { Component: Wrapped }
     },
   },
+  {
+    path: "/dashboard/logs",
+    lazy: async () => {
+      const { default: Component } = await import("./pages/dashboard/DashboardWeeklyLogs")
+      const { ProtectedRoute } = await import("./components/ProtectedRoute")
+      const Wrapped = () => <ProtectedRoute><Component /></ProtectedRoute>
+      return { Component: Wrapped }
+    },
+  },
   { path: "*", Component: Error },
 ])

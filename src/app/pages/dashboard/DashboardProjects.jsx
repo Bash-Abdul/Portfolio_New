@@ -247,6 +247,7 @@ import { EmptyState } from '../../components/dashboard/EmptyState'
 import { Plus, Edit, Trash2, Star, FolderKanban, Loader2 } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useAllProjects, useCreateProject, useUpdateProject, useDeleteProject } from '../../../hooks/useProjects'
+import { useIsAdmin } from '../../../hooks/useIsAdmin'
 
 const EMPTY_FORM = {
   title: '',
@@ -274,6 +275,7 @@ export default function DashboardProjects() {
   const createProject = useCreateProject()
   const updateProject = useUpdateProject()
   const deleteProject = useDeleteProject()
+  const isAdmin = useIsAdmin();
 
   const projects = data?.data ?? []
 
@@ -375,9 +377,10 @@ export default function DashboardProjects() {
   const isSaving = createProject.isPending || updateProject.isPending
 
   const actions = (
-    <button
+      <button
       onClick={openCreateModal}
-      className="px-6 py-3 bg-black dark:bg-white text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-colors flex items-center gap-2"
+      disabled={!isAdmin}
+      className="px-6 py-3 bg-black dark:bg-white text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
     >
       <Plus className="w-4 h-4" />
       New Project
@@ -464,7 +467,7 @@ export default function DashboardProjects() {
                   <div className="col-span-1">
                     <button
                       onClick={() => handleToggleFeatured(project)}
-                      disabled={updateProject.isPending}
+                      disabled={updateProject.isPending || !isAdmin}
                       className="p-1 transition-colors"
                       title={project.featured ? 'Unfeature' : 'Feature'}
                     >
@@ -473,7 +476,7 @@ export default function DashboardProjects() {
                           project.featured
                             ? 'fill-yellow-400 text-yellow-400'
                             : 'text-neutral-300 dark:text-neutral-600'
-                        }`}
+                        } disabled:opacity-50 disabled:cursor-not-allowed`}
                       />
                     </button>
                   </div>
@@ -484,15 +487,16 @@ export default function DashboardProjects() {
 
                   <div className="col-span-1 flex gap-2">
                     <button
+                    disabled={!isAdmin}
                       onClick={() => openEditModal(project)}
-                      className="p-1.5 hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors"
+                      className="p-1.5 hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <Edit className="w-4 h-4 dark:text-white" />
                     </button>
                     <button
                       onClick={() => handleDelete(project.id)}
-                      disabled={deleteProject.isPending}
-                      className="p-1.5 hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors"
+                      disabled={deleteProject.isPending || !isAdmin}
+                      className="p-1.5 hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <Trash2 className="w-4 h-4 text-red-600" />
                     </button>

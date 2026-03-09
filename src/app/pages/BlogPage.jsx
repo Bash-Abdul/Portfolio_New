@@ -6,6 +6,7 @@ import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { Calendar, Clock, Loader2 } from "lucide-react";
 import SEO from "../components/SEO";
 import { useBlogPosts } from "../../hooks/useBlogs";
+import { Chatbot } from "../components/Chatbot";
 
 export default function BlogPage() {
   const { data, isLoading, isError } = useBlogPosts({ limit: 50 })
@@ -167,6 +168,7 @@ export default function BlogPage() {
       )}
 
       <Contact />
+      <Chatbot />
     </div>
   )
 }

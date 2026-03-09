@@ -22,6 +22,20 @@ export function useMe() {
     const navigate = useNavigate()
     return useMutation({
       mutationFn: () => post('/api/auth/logout'),
-      onSuccess: () => navigate('/login')
+      // onSuccess: () => {
+      //   queryClient.invalidateQueries({ queryKey: ['me'] })
+      //   // or even more aggressive — clear everything
+      //   queryClient.clear()
+      //   navigate('/login')
+      // }
+      onSuccess: () => {
+        queryClient.clear()
+        navigate('/login', { replace: true })
+      },
+      onError: () => {
+        // even if logout fails, clear client state and redirect
+        queryClient.clear()
+        navigate('/login', { replace: true })
+      }
     })
   }

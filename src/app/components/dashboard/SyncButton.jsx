@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { RefreshCw, Check } from "lucide-react";
 import { motion } from "motion/react";
+import { useIsAdmin } from "../../../hooks/useIsAdmin";
 
 // interface SyncButtonProps {
 //   onSync: () => Promise<void>;
@@ -9,6 +10,7 @@ import { motion } from "motion/react";
 
 export function SyncButton({ onSync, label = "Sync Now" }) {
   const [state, setState] = useState("idle");
+  const isAdmin = useIsAdmin();
 
   const handleSync = async () => {
     setState("loading");
@@ -24,7 +26,7 @@ export function SyncButton({ onSync, label = "Sync Now" }) {
   return (
     <button
       onClick={handleSync}
-      disabled={state === "loading"}
+      disabled={state === "loading" || !isAdmin}
       className="px-6 py-3 border border-neutral-300 dark:border-neutral-600 hover:border-black dark:hover:border-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
     >
       {state === "loading" && (

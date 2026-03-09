@@ -6,6 +6,7 @@ import App from './app/App.jsx'
 import { HelmetProvider } from 'react-helmet-async'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClient } from './lib/queryClient'
+import { DevNotice } from './app/components/devNotice';
 
 
 console.log("MAIN LOADED");
@@ -15,6 +16,7 @@ createRoot(document.getElementById('root')).render(
     <HelmetProvider>
     <QueryClientProvider client={queryClient}>
         <App />
+        <DevNotice />
       </QueryClientProvider>
     </HelmetProvider>
   </StrictMode>,

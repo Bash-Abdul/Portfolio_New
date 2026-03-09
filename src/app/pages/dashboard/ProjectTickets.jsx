@@ -454,6 +454,7 @@ import {
   useUpdateTicket,
   useDeleteTicket
 } from '../../../hooks/useBoard'
+import { useIsAdmin } from '../../../hooks/useIsAdmin'
 
 const columns = [
   { id: 'todo',        title: 'To Do' },
@@ -472,15 +473,19 @@ const EMPTY_FORM = {
   status: 'todo', priority: 'medium', assignee: ''
 }
 
+let TICKETS_PER_COLUMN = 3
+
 export default function ProjectTickets() {
   const { projectId } = useParams()
   const navigate = useNavigate()
+  const isAdmin = useIsAdmin()
 
   const [isCreateOpen, setIsCreateOpen]     = useState(false)
   const [isDetailOpen, setIsDetailOpen]     = useState(false)
   const [isEditMode, setIsEditMode]         = useState(false)
   const [selectedTicket, setSelectedTicket] = useState(null)
   const [openMenuId, setOpenMenuId]         = useState(null)
+  const [expandedColumns, setExpandedColumns] = useState([])
   const [form, setForm]                     = useState(EMPTY_FORM)
   const [detailForm, setDetailForm]         = useState(null)
 
@@ -489,10 +494,11 @@ export default function ProjectTickets() {
   const updateTicket = useUpdateTicket(projectId)
   const deleteTicket = useDeleteTicket(projectId)
 
+  !isAdmin ? TICKETS_PER_COLUMN = 2 : TICKETS_PER_COLUMN = 3
+
   const tickets = data?.data    ?? []
   const project = data?.project ?? null
 
-  // close dropdown when clicking outside
   useEffect(() => {
     const close = () => setOpenMenuId(null)
     document.addEventListener('click', close)
@@ -501,6 +507,14 @@ export default function ProjectTickets() {
 
   function getByStatus(status) {
     return tickets.filter(t => t.status === status)
+  }
+
+  function toggleColumn(columnId) {
+    setExpandedColumns(prev =>
+      prev.includes(columnId)
+        ? prev.filter(id => id !== columnId)
+        : [...prev, columnId]
+    )
   }
 
   function handleOpenCreate(status = 'todo') {
@@ -512,7 +526,7 @@ export default function ProjectTickets() {
     setSelectedTicket(ticket)
     setIsEditMode(false)
     setDetailForm({
-      // title:       ticket.title,
+      title:       ticket.title,
       description: ticket.description ?? '',
       notes:       ticket.notes ?? '',
       status:      ticket.status,
@@ -584,7 +598,8 @@ export default function ProjectTickets() {
       </button>
       <button
         onClick={() => handleOpenCreate()}
-        className="px-6 py-3 bg-black dark:bg-white text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-colors flex items-center gap-2"
+        disabled={!isAdmin}
+        className="px-6 py-3 bg-black dark:bg-white text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <Plus className="w-4 h-4" />
         New Ticket
@@ -613,25 +628,26 @@ export default function ProjectTickets() {
   return (
     <DashboardLayout title={project?.name ?? 'Project Board'} actions={actions}>
       <div className="max-w-7xl">
-
-        {/* Kanban columns */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {columns.map(column => {
             const columnTickets = getByStatus(column.id)
+            const isExpanded = expandedColumns.includes(column.id)
+            const visibleTickets = isExpanded
+              ? columnTickets
+              : columnTickets.slice(0, TICKETS_PER_COLUMN)
+            const hiddenCount = columnTickets.length - TICKETS_PER_COLUMN
+
             return (
               <div key={column.id} className="flex flex-col">
-
-                {/* Column header */}
                 <div className="bg-neutral-100 dark:bg-neutral-800 px-4 py-3 mb-4">
                   <div className="flex items-center justify-between">
                     <h3 className="font-medium dark:text-white">{column.title}</h3>
                     <span className="text-sm text-neutral-600 dark:text-neutral-400">
-                      {columnTickets.length}
+                      {isAdmin ? columnTickets.length : '##'}
                     </span>
                   </div>
                 </div>
 
-                {/* Tickets */}
                 <div className="space-y-3 flex-1">
                   {columnTickets.length === 0 && (
                     <div className="text-center py-8 text-sm text-neutral-400">
@@ -639,21 +655,20 @@ export default function ProjectTickets() {
                     </div>
                   )}
 
-                  {columnTickets.map((ticket, index) => (
+                  {visibleTickets.map((ticket, index) => (
                     <motion.div
                       key={ticket.id}
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.3, delay: index * 0.05 }}
-                      onClick={() => handleOpenDetail(ticket)}
-                      className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 p-4 hover:border-neutral-400 dark:hover:border-neutral-500 transition-all cursor-pointer group"
+                      onClick={isAdmin ? () => handleOpenDetail(ticket) : undefined}
+                      className={`bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 p-4 hover:border-neutral-400 dark:hover:border-neutral-500 transition-all cursor-pointer group ${!isAdmin && `opacity-50 cursor-not-allowed`}`}
                     >
                       <div className="flex items-start justify-between mb-2">
                         <h4 className="font-medium dark:text-white group-hover:opacity-80 transition-opacity text-sm">
                           {ticket.title}
                         </h4>
 
-                        {/* Three dot menu */}
                         <div className="relative flex-shrink-0 opacity-0 group-hover:opacity-100">
                           <button
                             onClick={e => {
@@ -672,7 +687,8 @@ export default function ProjectTickets() {
                                   setOpenMenuId(null)
                                   handleOpenEdit(e, ticket)
                                 }}
-                                className="w-full px-4 py-2 text-sm text-left hover:bg-neutral-100 dark:hover:bg-neutral-700 dark:text-white flex items-center gap-2"
+                                disabled={!isAdmin}
+                                className="w-full px-4 py-2 text-sm text-left hover:bg-neutral-100 dark:hover:bg-neutral-700 dark:text-white flex items-center gap- disabled:opacity-50 disabled:cursor-not-allowed"
                               >
                                 <Edit className="w-3.5 h-3.5" />
                                 Edit
@@ -682,7 +698,8 @@ export default function ProjectTickets() {
                                   setOpenMenuId(null)
                                   handleDelete(e, ticket.id)
                                 }}
-                                className="w-full px-4 py-2 text-sm text-left hover:bg-neutral-100 dark:hover:bg-neutral-700 text-red-500 flex items-center gap-2"
+                                disabled={!isAdmin}
+                                className="w-full px-4 py-2 text-sm text-left hover:bg-neutral-100 dark:hover:bg-neutral-700 text-red-500 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
                                 Delete
@@ -711,9 +728,32 @@ export default function ProjectTickets() {
                     </motion.div>
                   ))}
 
+                  {
+                    !isAdmin ? '' : (
+                      hiddenCount > 0 && !isExpanded && (
+                        <button
+                          onClick={() => toggleColumn(column.id)}
+                          className="w-full py-2 text-sm text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white transition-colors border border-neutral-200 dark:border-neutral-700 hover:border-neutral-400 dark:hover:border-neutral-500"
+                        >
+                          Show {hiddenCount} more
+                        </button>
+                      )
+                    )
+                  }
+
+                  {isExpanded && columnTickets.length > TICKETS_PER_COLUMN && (
+                    <button
+                      onClick={() => toggleColumn(column.id)}
+                      className="w-full py-2 text-sm text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white transition-colors border border-neutral-200 dark:border-neutral-700 hover:border-neutral-400 dark:hover:border-neutral-500"
+                    >
+                      Show less
+                    </button>
+                  )}
+
                   <button
                     onClick={() => handleOpenCreate(column.id)}
-                    className="w-full border-2 border-dashed border-neutral-300 dark:border-neutral-700 hover:border-neutral-400 dark:hover:border-neutral-600 transition-colors py-3 text-sm text-neutral-500 dark:text-neutral-400"
+                    disabled={!isAdmin}
+                    className="w-full border-2 border-dashed border-neutral-300 dark:border-neutral-700 hover:border-neutral-400 dark:hover:border-neutral-600 transition-colors py-3 text-sm text-neutral-500 dark:text-neutral-400 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     + Add ticket
                   </button>
@@ -831,8 +871,6 @@ export default function ProjectTickets() {
             }
           >
             <div className="space-y-4">
-
-              {/* Title */}
               <div>
                 <label className="block text-sm font-medium mb-2 dark:text-white">Title</label>
                 {isEditMode ? (
@@ -847,7 +885,6 @@ export default function ProjectTickets() {
                 )}
               </div>
 
-              {/* Description */}
               {(isEditMode || detailForm.description) && (
                 <div>
                   <label className="block text-sm font-medium mb-2 dark:text-white">Description</label>
@@ -864,7 +901,6 @@ export default function ProjectTickets() {
                 </div>
               )}
 
-              {/* Status + Priority */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-2 dark:text-white">Status</label>
@@ -904,7 +940,6 @@ export default function ProjectTickets() {
                 </div>
               </div>
 
-              {/* Assignee */}
               {(isEditMode || detailForm.assignee) && (
                 <div>
                   <label className="block text-sm font-medium mb-2 dark:text-white">Assignee</label>
@@ -926,7 +961,6 @@ export default function ProjectTickets() {
                 </div>
               )}
 
-              {/* Notes — always editable */}
               <div>
                 <label className="block text-sm font-medium mb-2 dark:text-white">
                   Notes
@@ -942,11 +976,9 @@ export default function ProjectTickets() {
                   placeholder={"# Task Notes\n\n- [ ] Subtask 1\n- [ ] Subtask 2"}
                 />
               </div>
-
             </div>
           </Modal>
         )}
-
       </div>
     </DashboardLayout>
   )

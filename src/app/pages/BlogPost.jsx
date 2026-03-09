@@ -5,6 +5,7 @@ import { useParams, Link } from 'react-router'
 import { ArrowLeft, Calendar, Clock, Loader2 } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import { useBlogPost } from '../../hooks/useBlogs'
+import { Chatbot } from '../components/Chatbot'
 
 export default function BlogPost() {
   const { slug } = useParams()
@@ -120,6 +121,7 @@ export default function BlogPost() {
       </article>
 
       <Contact />
+      <Chatbot />
     </div>
   )
 }

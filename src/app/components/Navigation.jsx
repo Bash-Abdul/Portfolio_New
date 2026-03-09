@@ -163,8 +163,8 @@ export function Navigation() {
         animate={{ y: 0 }}
         transition={{ duration: 0.6, delay: 0.2 }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isDarkNav
-            ? "bg-transparent"
-            : "bg-white/80 dark:bg-neutral-900/80 backdrop-blur-md shadow-sm"
+          ? "bg-transparent"
+          : "bg-white/80 dark:bg-neutral-900/80 backdrop-blur-md shadow-sm"
           }`}
       >
         <div className="max-w-350 mx-auto px-6">
@@ -205,13 +205,17 @@ export function Navigation() {
               >
                 Blog
               </Link>
+              {import.meta.env.DEV && (
+                <Link to="/dashboard" className={`text-sm hover:opacity-60 transition-opacity ${isDarkNav ? "text-white" : "text-black dark:text-white"
+              }`}>Dashboard</Link>
+              )}
               <ThemeToggle isScrolled={!isDarkNav} isHomePage={isHomePage} />
               <a
                 href="#contact"
                 onClick={handleContactClick}
                 className={`px-6 py-3 border transition-all duration-300 cursor-pointer ${isDarkNav
-                    ? "border-white text-white hover:bg-white hover:text-black"
-                    : "border-black dark:border-white text-black dark:text-white hover:bg-black dark:hover:bg-white hover:text-white dark:hover:text-black"
+                  ? "border-white text-white hover:bg-white hover:text-black"
+                  : "border-black dark:border-white text-black dark:text-white hover:bg-black dark:hover:bg-white hover:text-white dark:hover:text-black"
                   }`}
               >
                 Contact
@@ -224,8 +228,8 @@ export function Navigation() {
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 className={`p-2 transition-colors duration-300 ${isDarkNav
-                    ? "text-white hover:text-neutral-300"
-                    : "text-black dark:text-white hover:text-neutral-600 dark:hover:text-neutral-300"
+                  ? "text-white hover:text-neutral-300"
+                  : "text-black dark:text-white hover:text-neutral-600 dark:hover:text-neutral-300"
                   }`}
                 aria-label="Toggle menu"
               >

@@ -116,6 +116,7 @@ import { useRecentActivity } from '../../../hooks/useActivity'
 import { useJobCounts } from '../../../hooks/useJobs'
 import { useBoardCounts } from '../../../hooks/useBoard'
 // import { useBlogPosts } from '../../hooks/useBlog'
+import {useIsAdmin} from '../../../hooks/useIsAdmin'
 
 export default function DashboardOverview() {
   const { data: projectCounts, isLoading: loadingProjects } = useProjectsCount()
@@ -125,6 +126,7 @@ export default function DashboardOverview() {
   const { data: jobCountsData } = useJobCounts()
   const { data: boardCountsData } = useBoardCounts()
   const syncBlog = useSyncBlog()
+  const isAdmin = useIsAdmin()
 
   const projects = projectCounts?.data ?? {}
   const blog = blogCounts?.data ?? {}
@@ -143,18 +145,18 @@ export default function DashboardOverview() {
     {
       icon: FolderKanban,
       label: 'Total Projects',
-      value: isLoading ? '...' : (projects.total ?? 0)
+      value: isLoading ? '...' : (isAdmin ? projects.total ?? 0 : '#')
     },
     {
       icon: FileText,
       label: 'Published Posts',
-      value: isLoading ? '...' : (blog.total ?? 0)
+      value: isLoading ? '...' : (isAdmin ? blog.total ?? 0 : '#')
     },
-    { icon: Briefcase, label: 'Open Applications', value: jobCounts.applied ?? 0 },
+    { icon: Briefcase, label: 'Open Applications', value: isLoading ? '...' : (isAdmin ? jobCounts.applied ?? 0 : '#') },
     {
       icon: CheckCircle,
       label: 'Active Tickets',
-      value: boardCounts.active_tickets ?? 0
+      value: isLoading ? '...' : (isAdmin ? boardCounts.active_tickets ?? 0 : '#')
     }
   ]
 
@@ -240,7 +242,8 @@ export default function DashboardOverview() {
                 <button
                   key={index}
                   onClick={action.onClick}
-                  className="w-full flex items-center gap-3 px-4 py-4 border border-neutral-300 dark:border-neutral-600 hover:border-black dark:hover:border-white hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all"
+                  disabled={!isAdmin}
+                  className="w-full flex items-center gap-3 px-4 py-4 border border-neutral-300 dark:border-neutral-600 hover:border-black dark:hover:border-white hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Plus className="w-5 h-5 dark:text-white" />
                   <span className="font-medium dark:text-white">{action.label}</span>
@@ -257,19 +260,19 @@ export default function DashboardOverview() {
                 <div className="flex justify-between">
                   <span className="text-neutral-600 dark:text-neutral-400">Published projects:</span>
                   <span className="font-medium dark:text-white">
-                    {isLoading ? '...' : (projects.published ?? 0)}
+                    {isLoading ? '...' : (isAdmin ? projects.published ?? 0 : '#')}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-neutral-600 dark:text-neutral-400">Draft projects:</span>
                   <span className="font-medium dark:text-white">
-                    {isLoading ? '...' : (projects.draft ?? 0)}
+                    {isLoading ? '...' : (isAdmin ? projects.draft ?? 0 : '#')}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-neutral-600 dark:text-neutral-400">Board projects:</span>
                   <span className="font-medium dark:text-white">
-                    {boardCounts.total_projects ?? 0}
+                    {isLoading ? '...' : (isAdmin ? boardCounts.total_projects ?? 0 : '#')}
                   </span>
                 </div>
               </div>
