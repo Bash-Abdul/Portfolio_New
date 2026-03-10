@@ -1,6 +1,7 @@
 import { RouterProvider } from "react-router";
 import { router } from "./routes.jsx";
 import { ThemeProvider } from "./components/ThemeProvider";
+import { Toaster } from 'sonner'
 // import { Analytics } from "@vercel/analytics/next"
 
 function PageLoader() {
@@ -15,6 +16,7 @@ export default function App() {
   return (
     <ThemeProvider>
       <RouterProvider router={router} fallbackElement={<PageLoader />} />
+      <Toaster position="bottom-right" richColors />
     </ThemeProvider>
   );
 }

@@ -1,224 +1,197 @@
 import { DashboardLayout } from "../../components/dashboard/DashboardLayout";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Plus, Calendar, CheckCircle, Lightbulb, Code, AlertCircle, Trash2, ChevronLeft, ChevronRight, X } from "lucide-react";
+import { Plus, Calendar, CheckCircle, Lightbulb, Code, AlertCircle, Trash2, ChevronLeft, ChevronRight, X, Wrench, Pencil } from "lucide-react";
+import { useIsAdmin } from "../../../hooks/useIsAdmin";
+import { useWeeklyLogs, useCreateWeeklyLogs, useUpdateWeeklyLogs, useDeleteWeeklyLogs } from "../../../hooks/useWeeklyLogs";
+import { toast } from "sonner";
+import Swal from 'sweetalert2'
 
-// interface ProjectLog {
-//   id: string;
-//   projectName: string;
-//   achievements: string[];
-//   challenges: string[];
-//   features: string[];
-//   learnings: string[];
-// }
-
-// interface WeeklyLog {
-//   id: string;
-//   weekStart: string;
-//   weekEnd: string;
-//   projects: ProjectLog[];
-//   createdAt: string;
-// }
-
-const mockLogs= [
-  {
-    id: "1",
-    weekStart: "2026-03-01",
-    weekEnd: "2026-03-07",
-    projects: [
-      {
-        id: "p1",
-        projectName: "Portfolio Website",
-        achievements: [
-          "Completed GitHub Activity section with real-time stats",
-          "Implemented responsive navigation with smooth transitions",
-          "Deployed to production with 99.9% uptime"
-        ],
-        challenges: [
-          "Integrating Motion animations with complex layouts",
-          "Optimizing bundle size for faster load times"
-        ],
-        features: [
-          "Activity Feed popup on homepage",
-          "Dark mode with system preference detection",
-          "Interactive hero section with mouse tracking"
-        ],
-        learnings: [
-          "Better understanding of React Router's protected routes",
-          "Advanced TypeScript interfaces for complex data structures",
-          "Performance optimization with code splitting"
-        ]
-      },
-      {
-        id: "p2",
-        projectName: "Dashboard System",
-        achievements: [
-          "Built comprehensive job application tracker",
-          "Implemented project board with Kanban-style tickets",
-          "Added password-only authentication system"
-        ],
-        challenges: [
-          "Managing state across multiple dashboard pages",
-          "Creating reusable components for different data types"
-        ],
-        features: [
-          "Weekly progress tracking system",
-          "Markdown support for workflow documentation",
-          "Status filtering and detailed application cards"
-        ],
-        learnings: [
-          "Improved localStorage management patterns",
-          "Better component composition strategies",
-          "Effective use of custom hooks for data management"
-        ]
-      }
-    ],
-    createdAt: "2026-03-07T10:00:00Z"
-  }
-];
+const emptyProject = {
+  projectName: "",
+  achievements: "",
+  challenges: "",
+  solutions: "",
+  features: "",
+  learnings: ""
+}
 
 export default function DashboardWeeklyLogs() {
-  const [logs, setLogs] = useState([]);
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [weekStart, setWeekStart] = useState("");
-  const [weekEnd, setWeekEnd] = useState("");
-  const [projects, setProjects] = useState([]);
-  const [currentProject, setCurrentProject] = useState({
-    projectName: "",
-    achievements: [],
-    challenges: [],
-    features: [],
-    learnings: []
-  });
-  const [projectFormInputs, setProjectFormInputs] = useState({
-    achievements: "",
-    challenges: "",
-    features: "",
-    learnings: ""
-  });
+  const { data, isLoading } = useWeeklyLogs()
+  const logs = data?.data ?? []
 
-  useEffect(() => {
-    const savedLogs = localStorage.getItem("weeklyLogs");
-    if (savedLogs) {
-      setLogs(JSON.parse(savedLogs));
-    } else {
-      setLogs(mockLogs);
-      localStorage.setItem("weeklyLogs", JSON.stringify(mockLogs));
-    }
-  }, []);
+  const createLog = useCreateWeeklyLogs()
+  const updateLog = useUpdateWeeklyLogs()
+  const deleteLog = useDeleteWeeklyLogs()
+  const isAdmin = useIsAdmin()
 
-  const saveLogs = (updatedLogs) => {
-    setLogs(updatedLogs);
-    localStorage.setItem("weeklyLogs", JSON.stringify(updatedLogs));
-  };
+  const [isFormOpen, setIsFormOpen] = useState(false)
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const [weekStart, setWeekStart] = useState("")
+  const [weekEnd, setWeekEnd] = useState("")
+  const [projects, setProjects] = useState([])
+  const [currentProject, setCurrentProject] = useState(emptyProject)
 
-  const addProjectToWeek = () => {
+  // null = create mode, log object = edit mode
+  // this single piece of state tells us both which mode we're in
+  // AND which log we're editing
+  const [editingLog, setEditingLog] = useState(null)
+  const isEditing = editingLog !== null
+
+  function resetForm() {
+    setWeekStart("")
+    setWeekEnd("")
+    setProjects([])
+    setCurrentProject(emptyProject)
+    setEditingLog(null)
+  }
+
+  function handleOpenCreate() {
+    resetForm()
+    setIsFormOpen(true)
+  }
+
+  function handleOpenEdit(log) {
+    // pre-fill the form with the existing log's data
+    setEditingLog(log)
+    setWeekStart(log.week_start.slice(0, 10))
+    setWeekEnd(log.week_end.slice(0, 10))
+    // projects are already arrays from the API — load them directly
+    // into the projects list, not the sub-form
+    setProjects(log.projects)
+    setCurrentProject(emptyProject)
+    setIsFormOpen(true)
+
+    console.log('editing log:', log)
+    console.log('week_start:', log.week_start)
+  }
+
+  function handleCloseForm() {
+    resetForm()
+    setIsFormOpen(false)
+  }
+
+  function addProjectToWeek() {
     if (!currentProject.projectName?.trim()) {
-      alert("Please enter a project name");
-      return;
+      toast.error('Please enter a project name')
+      return
     }
 
     const newProject = {
       id: Date.now().toString(),
       projectName: currentProject.projectName,
-      achievements: projectFormInputs.achievements.split("\n").filter(a => a.trim()),
-      challenges: projectFormInputs.challenges.split("\n").filter(c => c.trim()),
-      features: projectFormInputs.features.split("\n").filter(f => f.trim()),
-      learnings: projectFormInputs.learnings.split("\n").filter(l => l.trim())
-    };
+      achievements: currentProject.achievements.split("\n").filter(a => a.trim()),
+      challenges: currentProject.challenges.split("\n").filter(c => c.trim()),
+      solutions: currentProject.solutions.split("\n").filter(s => s.trim()),
+      features: currentProject.features.split("\n").filter(f => f.trim()),
+      learnings: currentProject.learnings.split("\n").filter(l => l.trim())
+    }
 
-    setProjects([...projects, newProject]);
-    setCurrentProject({
-      projectName: "",
-      achievements: [],
-      challenges: [],
-      features: [],
-      learnings: []
-    });
-    setProjectFormInputs({
-      achievements: "",
-      challenges: "",
-      features: "",
-      learnings: ""
-    });
-  };
+    setProjects([...projects, newProject])
+    setCurrentProject(emptyProject)
+  }
 
-  const removeProject = (projectId) => {
-    setProjects(projects.filter(p => p.id !== projectId));
-  };
+  function removeProject(projectId) {
+    setProjects(projects.filter(p => p.id !== projectId))
+  }
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    
+  function handleSubmit(e) {
+    e.preventDefault()
+
     if (projects.length === 0) {
-      alert("Please add at least one project");
-      return;
+      toast.error('Add at least one project')
+      return
     }
 
-    const newLog= {
-      id: Date.now().toString(),
-      weekStart,
-      weekEnd,
-      projects,
-      createdAt: new Date().toISOString()
-    };
+    const payload = { week_start: weekStart, week_end: weekEnd, projects }
 
-    const updatedLogs = [newLog, ...logs];
-    saveLogs(updatedLogs);
-    
-    // Reset form
-    setWeekStart("");
-    setWeekEnd("");
-    setProjects([]);
-    setCurrentProject({
-      projectName: "",
-      achievements: [],
-      challenges: [],
-      features: [],
-      learnings: []
-    });
-    setProjectFormInputs({
-      achievements: "",
-      challenges: "",
-      features: "",
-      learnings: ""
-    });
-    setIsFormOpen(false);
-  };
-
-  const handleDelete = (id) => {
-    const updatedLogs = logs.filter(log => log.id !== id);
-    saveLogs(updatedLogs);
-    if (currentIndex >= updatedLogs.length && currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1);
+    if (isEditing) {
+      // PUT /api/weekly-logs/:id with the full updated log
+      updateLog.mutate(
+        { id: editingLog.id, data: payload },
+        {
+          onSuccess: () => {
+            toast.success('Log updated')
+            resetForm()
+            setIsFormOpen(false)
+          },
+          onError: () => toast.error('Failed to update log')
+        }
+      )
+    } else {
+      // POST /api/weekly-logs
+      createLog.mutate(payload, {
+        onSuccess: () => {
+          toast.success('Log created')
+          resetForm()
+          setIsFormOpen(false)
+        },
+        onError: (err) => toast.error(err?.response?.data?.message ?? 'Failed to create log')
+      })
     }
-  };
+  }
 
-  const formatDate = (dateString) => {
+  async function handleDelete(id) {
+    const result = await Swal.fire({
+      title: 'Delete this log?',
+      text: 'This cannot be undone.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Delete',
+      confirmButtonColor: '#000',
+      cancelButtonText: 'Cancel',
+    })
+    if (!result.isConfirmed) return
+
+    deleteLog.mutate(id, {
+      onSuccess: () => {
+        toast.success('Log deleted')
+        if (currentIndex >= logs.length - 1 && currentIndex > 0) {
+          setCurrentIndex(currentIndex - 1)
+        }
+      },
+      onError: () => toast.error('Failed to delete log')
+    })
+  }
+
+  function formatDate(dateString) {
     return new Date(dateString).toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
       year: "numeric"
-    });
-  };
+    })
+  }
 
-  const currentLog = logs[currentIndex];
+  const currentLog = logs[currentIndex]
+  const isPending = createLog.isPending || updateLog.isPending
+
+  if (isLoading) {
+    return (
+      <DashboardLayout title="Weekly Logs">
+        <div className="flex items-center justify-center h-64">
+          <div className="w-6 h-6 border-2 border-black dark:border-white border-t-transparent rounded-full animate-spin" />
+        </div>
+      </DashboardLayout>
+    )
+  }
 
   return (
     <DashboardLayout
       title="Weekly Logs"
       actions={
-        <button
-          onClick={() => setIsFormOpen(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-black dark:bg-white text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-colors"
-        >
-          <Plus className="w-4 h-4" />
-          <span className="hidden sm:inline">Add Log</span>
-        </button>
+        isAdmin && (
+          <button
+            onClick={handleOpenCreate}
+            className="flex items-center gap-2 px-4 py-2 bg-black dark:bg-white text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+            <span className="hidden sm:inline">Add Log</span>
+          </button>
+        )
       }
     >
       <div className="max-w-5xl space-y-8">
+
         {/* Form Modal */}
         <AnimatePresence>
           {isFormOpen && (
@@ -227,7 +200,7 @@ export default function DashboardWeeklyLogs() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                onClick={() => setIsFormOpen(false)}
+                onClick={handleCloseForm}
                 className="fixed inset-0 bg-black/50 z-40"
               />
               <motion.div
@@ -238,22 +211,22 @@ export default function DashboardWeeklyLogs() {
               >
                 <form onSubmit={handleSubmit} className="p-6 space-y-6">
                   <div className="flex items-center justify-between border-b border-neutral-200 dark:border-neutral-800 pb-4">
-                    <h2 className="text-2xl font-bold dark:text-white">New Weekly Log</h2>
+                    {/* title changes based on mode */}
+                    <h2 className="text-2xl font-bold dark:text-white">
+                      {isEditing ? 'Edit Weekly Log' : 'New Weekly Log'}
+                    </h2>
                     <button
                       type="button"
-                      onClick={() => setIsFormOpen(false)}
+                      onClick={handleCloseForm}
                       className="text-neutral-500 hover:text-neutral-900 dark:hover:text-white"
                     >
                       <X className="w-6 h-6" />
                     </button>
                   </div>
 
-                  {/* Week Date Range */}
                   <div className="grid md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium mb-2 dark:text-white">
-                        Week Start
-                      </label>
+                      <label className="block text-sm font-medium mb-2 dark:text-white">Week Start</label>
                       <input
                         type="date"
                         required
@@ -263,9 +236,7 @@ export default function DashboardWeeklyLogs() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-2 dark:text-white">
-                        Week End
-                      </label>
+                      <label className="block text-sm font-medium mb-2 dark:text-white">Week End</label>
                       <input
                         type="date"
                         required
@@ -276,10 +247,9 @@ export default function DashboardWeeklyLogs() {
                     </div>
                   </div>
 
-                  {/* Added Projects */}
                   {projects.length > 0 && (
                     <div className="space-y-3">
-                      <h3 className="font-medium dark:text-white">Projects Added ({projects.length})</h3>
+                      <h3 className="font-medium dark:text-white">Projects ({projects.length})</h3>
                       <div className="space-y-2 max-h-40 overflow-y-auto">
                         {projects.map((project) => (
                           <div
@@ -287,87 +257,73 @@ export default function DashboardWeeklyLogs() {
                             className="flex items-center justify-between p-3 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700"
                           >
                             <span className="font-medium dark:text-white">{project.projectName}</span>
-                            <button
-                              type="button"
-                              onClick={() => removeProject(project.id)}
-                              className="text-red-500 hover:text-red-700"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
+                            <div className="flex gap-3">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  // load project back into sub-form for editing
+                                  setCurrentProject({
+                                    projectName: project.projectName,
+                                    achievements: project.achievements.join("\n"),
+                                    challenges: project.challenges.join("\n"),
+                                    solutions: project.solutions.join("\n"),
+                                    features: project.features.join("\n"),
+                                    learnings: project.learnings.join("\n")
+                                  })
+                                  // remove it from the list so when they click
+                                  // "Add Project" it replaces it rather than duplicating
+                                  removeProject(project.id)
+                                }}
+                                className="text-neutral-500 hover:text-black dark:hover:text-white"
+                              >
+                                <Pencil className="w-4 h-4" />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => removeProject(project.id)}
+                                className="text-red-500 hover:text-red-700"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
                           </div>
                         ))}
                       </div>
                     </div>
                   )}
 
-                  {/* Project Form */}
                   <div className="border-t border-neutral-200 dark:border-neutral-800 pt-6 space-y-4">
                     <h3 className="font-medium dark:text-white">Add Project</h3>
-                    
+
                     <div>
-                      <label className="block text-sm font-medium mb-2 dark:text-white">
-                        Project Name *
-                      </label>
+                      <label className="block text-sm font-medium mb-2 dark:text-white">Project Name *</label>
                       <input
                         type="text"
-                        value={currentProject.projectName || ""}
+                        value={currentProject.projectName}
                         onChange={(e) => setCurrentProject({ ...currentProject, projectName: e.target.value })}
                         className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white focus:outline-none focus:border-black dark:focus:border-white"
                         placeholder="e.g., Portfolio Website"
                       />
                     </div>
 
-                    <div>
-                      <label className="block text-sm font-medium mb-2 dark:text-white">
-                        Achievements (one per line)
-                      </label>
-                      <textarea
-                        rows={3}
-                        value={projectFormInputs.achievements}
-                        onChange={(e) => setProjectFormInputs({ ...projectFormInputs, achievements: e.target.value })}
-                        className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white focus:outline-none focus:border-black dark:focus:border-white resize-none"
-                        placeholder="Completed authentication system&#10;Deployed to production"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium mb-2 dark:text-white">
-                        Challenges Faced (one per line)
-                      </label>
-                      <textarea
-                        rows={3}
-                        value={projectFormInputs.challenges}
-                        onChange={(e) => setProjectFormInputs({ ...projectFormInputs, challenges: e.target.value })}
-                        className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white focus:outline-none focus:border-black dark:focus:border-white resize-none"
-                        placeholder="Complex state management&#10;Performance optimization"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium mb-2 dark:text-white">
-                        Features Implemented (one per line)
-                      </label>
-                      <textarea
-                        rows={3}
-                        value={projectFormInputs.features}
-                        onChange={(e) => setProjectFormInputs({ ...projectFormInputs, features: e.target.value })}
-                        className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white focus:outline-none focus:border-black dark:focus:border-white resize-none"
-                        placeholder="User authentication&#10;Dark mode toggle"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium mb-2 dark:text-white">
-                        What I Learned (one per line)
-                      </label>
-                      <textarea
-                        rows={3}
-                        value={projectFormInputs.learnings}
-                        onChange={(e) => setProjectFormInputs({ ...projectFormInputs, learnings: e.target.value })}
-                        className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white focus:outline-none focus:border-black dark:focus:border-white resize-none"
-                        placeholder="React Router best practices&#10;TypeScript advanced patterns"
-                      />
-                    </div>
+                    {[
+                      { key: "achievements", label: "Achievements", placeholder: "Completed auth system\nDeployed to production" },
+                      { key: "challenges", label: "Challenges Faced", placeholder: "Complex state management\nPerformance optimization" },
+                      { key: "solutions", label: "Solutions", placeholder: "Used Promise.all\nLazy loaded routes" },
+                      { key: "features", label: "Features Implemented", placeholder: "User authentication\nDark mode toggle" },
+                      { key: "learnings", label: "What I Learned", placeholder: "React Router best practices\nTypeScript patterns" },
+                    ].map(({ key, label, placeholder }) => (
+                      <div key={key}>
+                        <label className="block text-sm font-medium mb-2 dark:text-white">{label} (one per line)</label>
+                        <textarea
+                          rows={3}
+                          value={currentProject[key]}
+                          onChange={(e) => setCurrentProject({ ...currentProject, [key]: e.target.value })}
+                          className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white focus:outline-none focus:border-black dark:focus:border-white resize-none"
+                          placeholder={placeholder}
+                        />
+                      </div>
+                    ))}
 
                     <button
                       type="button"
@@ -378,17 +334,17 @@ export default function DashboardWeeklyLogs() {
                     </button>
                   </div>
 
-                  {/* Submit */}
                   <div className="flex gap-3 pt-4 border-t border-neutral-200 dark:border-neutral-800">
                     <button
                       type="submit"
-                      className="flex-1 px-6 py-3 bg-black dark:bg-white text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-colors font-medium"
+                      disabled={isPending}
+                      className="flex-1 px-6 py-3 bg-black dark:bg-white text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-colors font-medium disabled:opacity-50"
                     >
-                      Save Weekly Log
+                      {isPending ? 'Saving...' : isEditing ? 'Update Log' : 'Save Log'}
                     </button>
                     <button
                       type="button"
-                      onClick={() => setIsFormOpen(false)}
+                      onClick={handleCloseForm}
                       className="px-6 py-3 border border-neutral-300 dark:border-neutral-700 dark:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
                     >
                       Cancel
@@ -400,7 +356,6 @@ export default function DashboardWeeklyLogs() {
           )}
         </AnimatePresence>
 
-        {/* Logs Display */}
         {logs.length === 0 ? (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -412,17 +367,18 @@ export default function DashboardWeeklyLogs() {
             <p className="text-neutral-600 dark:text-neutral-400 mb-6">
               Start tracking your weekly progress by creating your first log entry.
             </p>
-            <button
-              onClick={() => setIsFormOpen(true)}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-black dark:bg-white text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-colors"
-            >
-              <Plus className="w-4 h-4" />
-              Create First Log
-            </button>
+            {isAdmin && (
+              <button
+                onClick={handleOpenCreate}
+                className="inline-flex items-center gap-2 px-6 py-3 bg-black dark:bg-white text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-colors"
+              >
+                <Plus className="w-4 h-4" />
+                Create First Log
+              </button>
+            )}
           </motion.div>
         ) : (
           <>
-            {/* Navigation */}
             <div className="flex items-center justify-between">
               <button
                 onClick={() => setCurrentIndex(Math.max(0, currentIndex - 1))}
@@ -445,7 +401,6 @@ export default function DashboardWeeklyLogs() {
               </button>
             </div>
 
-            {/* Current Log */}
             <AnimatePresence mode="wait">
               {currentLog && (
                 <motion.div
@@ -455,126 +410,72 @@ export default function DashboardWeeklyLogs() {
                   exit={{ opacity: 0, x: -20 }}
                   className="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700"
                 >
-                  {/* Header */}
                   <div className="p-6 border-b border-neutral-200 dark:border-neutral-700">
                     <div className="flex items-start justify-between">
                       <div>
                         <div className="flex items-center gap-3 mb-2">
                           <Calendar className="w-5 h-5 text-neutral-600 dark:text-neutral-400" />
                           <h3 className="text-xl font-bold dark:text-white">
-                            {formatDate(currentLog.weekStart)} - {formatDate(currentLog.weekEnd)}
+                            {formatDate(currentLog.week_start)} — {formatDate(currentLog.week_end)}
                           </h3>
                         </div>
                         <p className="text-sm text-neutral-600 dark:text-neutral-400">
-                          {currentLog.projects.length} project{currentLog.projects.length !== 1 ? 's' : ''} • Created {formatDate(currentLog.createdAt)}
+                          {currentLog.projects.length} project{currentLog.projects.length !== 1 ? 's' : ''} • Created {formatDate(currentLog.created_at)}
                         </p>
                       </div>
-                      <button
-                        onClick={() => handleDelete(currentLog.id)}
-                        className="p-2 text-neutral-500 hover:text-red-500 dark:hover:text-red-400 transition-colors"
-                      >
-                        <Trash2 className="w-5 h-5" />
-                      </button>
+                      {isAdmin && (
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => handleOpenEdit(currentLog)}
+                            className="p-2 text-neutral-500 hover:text-black dark:hover:text-white transition-colors"
+                          >
+                            <Pencil className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(currentLog.id)}
+                            disabled={deleteLog.isPending}
+                            className="p-2 text-neutral-500 hover:text-red-500 dark:hover:text-red-400 transition-colors disabled:opacity-50"
+                          >
+                            <Trash2 className="w-5 h-5" />
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
 
-                  {/* Projects */}
                   <div className="p-6 space-y-8">
                     {currentLog.projects.map((project, projectIndex) => (
-                      <div
-                        key={project.id}
-                        className="border-l-4 border-blue-500 pl-6 space-y-4"
-                      >
+                      <div key={project.id} className="border-l-4 border-blue-500 pl-6 space-y-4">
                         <div className="flex items-center gap-2">
                           <Code className="w-5 h-5 text-blue-500" />
                           <h4 className="text-lg font-bold dark:text-white">{project.projectName}</h4>
                         </div>
 
-                        {/* Achievements */}
-                        {project.achievements.length > 0 && (
-                          <div>
-                            <div className="flex items-center gap-2 mb-2">
-                              <CheckCircle className="w-4 h-4 text-green-500" />
-                              <h5 className="font-medium text-sm dark:text-white">Achievements</h5>
+                        {[
+                          { items: project.achievements, label: "Achievements", icon: <CheckCircle className="w-4 h-4 text-green-500" />, color: "text-green-500" },
+                          { items: project.challenges, label: "Challenges", icon: <AlertCircle className="w-4 h-4 text-orange-500" />, color: "text-orange-500" },
+                          { items: project.solutions, label: "Solutions", icon: <Wrench className="w-4 h-4 text-blue-400" />, color: "text-blue-400" },
+                          { items: project.features, label: "Features Implemented", icon: <Plus className="w-4 h-4 text-purple-500" />, color: "text-purple-500" },
+                          { items: project.learnings, label: "What I Learned", icon: <Lightbulb className="w-4 h-4 text-yellow-500" />, color: "text-yellow-500" },
+                        ].map(({ items, label, icon, color }) =>
+                          items?.length > 0 && (
+                            <div key={label}>
+                              <div className="flex items-center gap-2 mb-2">
+                                {icon}
+                                <h5 className="font-medium text-sm dark:text-white">{label}</h5>
+                              </div>
+                              <div className="pl-6 space-y-1">
+                                {items.map((item, i) => (
+                                  <div key={i} className="text-sm text-neutral-700 dark:text-neutral-300 flex items-start gap-2">
+                                    <span className={`${color} mt-1`}>•</span>
+                                    <span>{item}</span>
+                                  </div>
+                                ))}
+                              </div>
                             </div>
-                            <div className="pl-6 space-y-1">
-                              {project.achievements.map((achievement, index) => (
-                                <div
-                                  key={index}
-                                  className="text-sm text-neutral-700 dark:text-neutral-300 flex items-start gap-2"
-                                >
-                                  <span className="text-green-500 mt-1">•</span>
-                                  <span>{achievement}</span>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
+                          )
                         )}
 
-                        {/* Challenges */}
-                        {project.challenges.length > 0 && (
-                          <div>
-                            <div className="flex items-center gap-2 mb-2">
-                              <AlertCircle className="w-4 h-4 text-orange-500" />
-                              <h5 className="font-medium text-sm dark:text-white">Challenges</h5>
-                            </div>
-                            <div className="pl-6 space-y-1">
-                              {project.challenges.map((challenge, index) => (
-                                <div
-                                  key={index}
-                                  className="text-sm text-neutral-700 dark:text-neutral-300 flex items-start gap-2"
-                                >
-                                  <span className="text-orange-500 mt-1">•</span>
-                                  <span>{challenge}</span>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Features */}
-                        {project.features.length > 0 && (
-                          <div>
-                            <div className="flex items-center gap-2 mb-2">
-                              <Plus className="w-4 h-4 text-purple-500" />
-                              <h5 className="font-medium text-sm dark:text-white">Features Implemented</h5>
-                            </div>
-                            <div className="pl-6 space-y-1">
-                              {project.features.map((feature, index) => (
-                                <div
-                                  key={index}
-                                  className="text-sm text-neutral-700 dark:text-neutral-300 flex items-start gap-2"
-                                >
-                                  <span className="text-purple-500 mt-1">•</span>
-                                  <span>{feature}</span>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Learnings */}
-                        {project.learnings.length > 0 && (
-                          <div>
-                            <div className="flex items-center gap-2 mb-2">
-                              <Lightbulb className="w-4 h-4 text-yellow-500" />
-                              <h5 className="font-medium text-sm dark:text-white">What I Learned</h5>
-                            </div>
-                            <div className="pl-6 space-y-1">
-                              {project.learnings.map((learning, index) => (
-                                <div
-                                  key={index}
-                                  className="text-sm text-neutral-700 dark:text-neutral-300 flex items-start gap-2"
-                                >
-                                  <span className="text-yellow-500 mt-1">•</span>
-                                  <span>{learning}</span>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Divider between projects */}
                         {projectIndex < currentLog.projects.length - 1 && (
                           <div className="border-b border-neutral-200 dark:border-neutral-700 pt-4" />
                         )}
@@ -588,5 +489,5 @@ export default function DashboardWeeklyLogs() {
         )}
       </div>
     </DashboardLayout>
-  );
+  )
 }
