@@ -321,7 +321,7 @@ import { Tabs } from '../../components/dashboard/Tabs'
 import { Modal } from '../../components/dashboard/Modal'
 import { EmptyState } from '../../components/dashboard/EmptyState'
 import { Plus, Edit, Trash2, ExternalLink, Briefcase, Calendar, Building2, Loader2 } from 'lucide-react'
-import { motion } from 'motion/react'
+// import { motion } from 'motion/react'
 import { useJobs, useJobCounts, useCreateJob, useUpdateJob, useDeleteJob } from '../../../hooks/useJobs'
 import {useIsAdmin} from '../../../hooks/useIsAdmin'
 
