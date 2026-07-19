@@ -108,6 +108,7 @@
 
 import { createBrowserRouter } from "react-router"
 import Error from "./Error"
+import RouteErrorBoundary from "./RouteErrorBoundary"
 
 export const router = createBrowserRouter([
   {
@@ -210,5 +211,9 @@ export const router = createBrowserRouter([
       return { Component: Wrapped }
     },
   },
-  { path: "*", Component: Error },
+  {
+    path: "*",
+    Component: Error,
+    errorElement: <RouteErrorBoundary />,
+  },
 ])
