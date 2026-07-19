@@ -98,11 +98,6 @@ export default function DashboardWeeklyLogs() {
   function handleSubmit(e) {
     e.preventDefault()
 
-    if (projects.length === 0) {
-      toast.error('Add at least one project')
-      return
-    }
-
     const payload = { week_start: weekStart, week_end: weekEnd, projects }
 
     if (isEditing) {
@@ -386,7 +381,7 @@ export default function DashboardWeeklyLogs() {
                 className="flex items-center gap-2 px-4 py-2 border border-neutral-300 dark:border-neutral-700 dark:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
               >
                 <ChevronLeft className="w-4 h-4" />
-                <span className="hidden sm:inline">Previous Week</span>
+                <span className="hidden sm:inline">Next Week</span>
               </button>
               <div className="text-sm text-neutral-600 dark:text-neutral-400">
                 {currentIndex + 1} of {logs.length} weeks
@@ -396,7 +391,7 @@ export default function DashboardWeeklyLogs() {
                 disabled={currentIndex === logs.length - 1}
                 className="flex items-center gap-2 px-4 py-2 border border-neutral-300 dark:border-neutral-700 dark:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
               >
-                <span className="hidden sm:inline">Next Week</span>
+                <span className="hidden sm:inline">Previous Week</span>
                 <ChevronRight className="w-4 h-4" />
               </button>
             </div>

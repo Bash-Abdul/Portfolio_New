@@ -324,6 +324,7 @@ import { Plus, Edit, Trash2, ExternalLink, Briefcase, Calendar, Building2, Loade
 // import { motion } from 'motion/react'
 import { useJobs, useJobCounts, useCreateJob, useUpdateJob, useDeleteJob } from '../../../hooks/useJobs'
 import {useIsAdmin} from '../../../hooks/useIsAdmin'
+import { motion } from "motion/react";
 
 const statusConfig = {
   applied:   { variant: 'pending',   label: 'Applied' },
