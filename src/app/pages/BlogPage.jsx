@@ -8,6 +8,15 @@ import SEO from "../components/SEO";
 import { useBlogPosts } from "../../hooks/useBlogs";
 import { Chatbot } from "../components/Chatbot";
 
+function truncateWords(text, limit = 12) {
+  if (!text) return ''
+
+  const words = text.trim().split(/\s+/)
+  return words.length > limit
+    ? `${words.slice(0, limit).join(' ')}...`
+    : text
+}
+
 export default function BlogPage() {
   const { data, isLoading, isError } = useBlogPosts({ limit: 50 })
   const posts = data?.data ?? []
@@ -79,7 +88,7 @@ export default function BlogPage() {
                           {featuredPost.title}
                         </h2>
                         <p className="text-xl text-neutral-600 mb-6 leading-relaxed">
-                          {featuredPost.excerpt}
+                          {truncateWords(featuredPost.excerpt)}
                         </p>
                         <div className="flex items-center gap-6 text-sm text-neutral-500">
                           <span className="flex items-center gap-2">
@@ -122,9 +131,10 @@ export default function BlogPage() {
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
                       transition={{ duration: 0.6, delay: index * 0.1 }}
+                      className="h-full"
                     >
-                      <Link to={`/blog/${post.slug}`} className="group block">
-                        <div className="bg-white border border-neutral-200 overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                      <Link to={`/blog/${post.slug}`} className="group block h-full">
+                        <div className="h-full bg-white border border-neutral-200 overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col">
                           <div className="aspect-[16/10] relative overflow-hidden bg-neutral-900">
                             {post.image ? (
                               <ImageWithFallback
@@ -136,7 +146,7 @@ export default function BlogPage() {
                               <div className="w-full h-full bg-neutral-800" />
                             )}
                           </div>
-                          <div className="p-6">
+                          <div className="p-6 flex flex-col flex-1">
                             {post.category && (
                               <span className="text-xs text-neutral-500 uppercase tracking-wider mb-2 block">
                                 {post.category}
@@ -145,8 +155,10 @@ export default function BlogPage() {
                             <h3 className="text-2xl mb-3 group-hover:opacity-70 transition-opacity">
                               {post.title}
                             </h3>
-                            <p className="text-neutral-600 mb-4 leading-relaxed">{post.excerpt}</p>
-                            <div className="flex items-center gap-4 text-sm text-neutral-500">
+                            <p className="text-neutral-600 mb-4 leading-relaxed">
+                              {truncateWords(post.excerpt)}
+                            </p>
+                            <div className="flex items-center gap-4 text-sm text-neutral-500 mt-auto pt-2">
                               <span className="flex items-center gap-1">
                                 <Calendar className="w-3 h-3" />
                                 {new Date(post.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}

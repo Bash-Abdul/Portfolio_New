@@ -18,9 +18,8 @@ export default function Home() {
   return (
     <div className="size-full bg-white dark:bg-neutral-900">
         <SEO
-        title="Bashir Abdulah | React Frontend Developer - Modern Web and App Interfaces"
-        // description="About Bashir Abdulah, also known as Bash Abdul, a React frontend developer creating fast, accessible, user-friendly web experiences."
-        description="Welcome to the portfolio of Bashir Abdulah, a React frontend developer crafting modern, responsive websites and mobile apps with clean UI/UX design and scalable performance."
+        title="Bashir Abdulah | Software Engineer"
+        description="Bashir Abdulah is a software engineer architecting reliable, scalable systems and thoughtfully engineered digital products for long-term growth."
         url="/"
       />
       <Navigation />

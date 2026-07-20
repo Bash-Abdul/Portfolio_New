@@ -5,9 +5,9 @@ import { Helmet } from "react-helmet-async";
 const SITE_URL = "https://bashabdul.com";
 const SITE_NAME = "Bashir Abdulah";
 
-const DEFAULT_TITLE = "Bashir Abdulah, React Frontend Developer";
+const DEFAULT_TITLE = "Bashir Abdulah | Software Engineer";
 const DEFAULT_DESC =
-  "Portfolio of Bashir Abdulah, React frontend developer building modern, responsive web apps with clean UI, accessibility, and performance.";
+  "Bashir Abdulah is a software engineer architecting reliable, scalable systems and thoughtfully engineered digital products for long-term growth.";
 const DEFAULT_IMAGE = `${SITE_URL}/og.png`; // put a 1200x630 image in /public/og.png
 
 export default function SEO({
@@ -37,7 +37,7 @@ export default function SEO({
     name: "Bashir Abdulah",
     alternateName: "Bash Abdul",
     url: SITE_URL,
-    jobTitle: "Frontend Developer",
+    jobTitle: "Software Engineer",
     description,
     image,
     sameAs,
