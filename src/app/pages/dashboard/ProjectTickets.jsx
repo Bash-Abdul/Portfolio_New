@@ -473,8 +473,6 @@ const EMPTY_FORM = {
   status: 'todo', priority: 'medium', assignee: ''
 }
 
-let TICKETS_PER_COLUMN = 3
-
 export default function ProjectTickets() {
   const { projectId } = useParams()
   const navigate = useNavigate()
@@ -494,7 +492,7 @@ export default function ProjectTickets() {
   const updateTicket = useUpdateTicket(projectId)
   const deleteTicket = useDeleteTicket(projectId)
 
-  !isAdmin ? TICKETS_PER_COLUMN = 2 : TICKETS_PER_COLUMN = 3
+  const ticketsPerColumn = isAdmin ? 3 : 2
 
   const tickets = data?.data    ?? []
   const project = data?.project ?? null
@@ -634,8 +632,8 @@ export default function ProjectTickets() {
             const isExpanded = expandedColumns.includes(column.id)
             const visibleTickets = isExpanded
               ? columnTickets
-              : columnTickets.slice(0, TICKETS_PER_COLUMN)
-            const hiddenCount = columnTickets.length - TICKETS_PER_COLUMN
+              : columnTickets.slice(0, ticketsPerColumn)
+            const hiddenCount = columnTickets.length - ticketsPerColumn
 
             return (
               <div key={column.id} className="flex flex-col">
@@ -741,7 +739,7 @@ export default function ProjectTickets() {
                     )
                   }
 
-                  {isExpanded && columnTickets.length > TICKETS_PER_COLUMN && (
+                  {isExpanded && columnTickets.length > ticketsPerColumn && (
                     <button
                       onClick={() => toggleColumn(column.id)}
                       className="w-full py-2 text-sm text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white transition-colors border border-neutral-200 dark:border-neutral-700 hover:border-neutral-400 dark:hover:border-neutral-500"

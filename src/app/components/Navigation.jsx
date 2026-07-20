@@ -100,7 +100,7 @@ import heroImage from '../assets/hero.png'
 
 export function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [mobileMenuPath, setMobileMenuPath] = useState(null);
   const location = useLocation();
   const navigate = useNavigate();
   // new stuff?
@@ -116,10 +116,7 @@ export function Navigation() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Close mobile menu when route changes
-  useEffect(() => {
-    setIsMobileMenuOpen(false);
-  }, [location.pathname]);
+  const isMobileMenuOpen = mobileMenuPath === location.pathname;
 
   const isHomePage = location.pathname === "/";
   const darkNav = isHomePage || location.pathname === "/projects"
@@ -130,7 +127,7 @@ export function Navigation() {
 
   const handleContactClick = (e) => {
     e.preventDefault();
-    setIsMobileMenuOpen(false);
+    setMobileMenuPath(null);
     if (isHomePage) {
       // Already on homepage, just scroll to contact
       const contactSection = document.getElementById("contact");
@@ -226,7 +223,7 @@ export function Navigation() {
             <div className="md:hidden flex items-center gap-4">
               <ThemeToggle isScrolled={!isDarkNav} isHomePage={isHomePage} />
               <button
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                onClick={() => setMobileMenuPath(isMobileMenuOpen ? null : location.pathname)}
                 className={`p-2 transition-colors duration-300 ${isDarkNav
                   ? "text-white hover:text-neutral-300"
                   : "text-black dark:text-white hover:text-neutral-600 dark:hover:text-neutral-300"
@@ -258,18 +255,21 @@ export function Navigation() {
               <nav className="flex flex-col gap-4">
                 <Link
                   to="/projects"
+                  onClick={() => setMobileMenuPath(null)}
                   className="text-lg py-3 hover:opacity-60 transition-opacity dark:text-white"
                 >
                   Work
                 </Link>
                 <Link
                   to="/about"
+                  onClick={() => setMobileMenuPath(null)}
                   className="text-lg py-3 hover:opacity-60 transition-opacity dark:text-white"
                 >
                   About
                 </Link>
                 <Link
                   to="/blog"
+                  onClick={() => setMobileMenuPath(null)}
                   className="text-lg py-3 hover:opacity-60 transition-opacity dark:text-white"
                 >
                   Blog

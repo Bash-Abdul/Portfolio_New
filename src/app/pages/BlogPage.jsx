@@ -49,7 +49,7 @@ export default function BlogPage() {
         <>
           {/* Featured Post — most recent */}
           {featuredPost && (
-            <section className="px-6 pb-24">
+            <section className="px-6 py-24 bg-[#0a0a0a] text-white">
               <div className="max-w-[1400px] mx-auto">
                 <motion.div
                   initial={{ opacity: 0, y: 40 }}
@@ -57,8 +57,11 @@ export default function BlogPage() {
                   viewport={{ once: true }}
                   transition={{ duration: 0.8 }}
                 >
+                  <span className="text-sm text-neutral-500 font-mono mb-8 block">
+                    — FEATURED
+                  </span>
                   <Link to={`/blog/${featuredPost.slug}`} className="group block">
-                    <div className="grid lg:grid-cols-2 gap-12 items-center bg-neutral-50 overflow-hidden">
+                    <div className="grid lg:grid-cols-2 gap-12 items-center overflow-hidden bg-neutral-900">
                       <div className="aspect-[16/10] relative overflow-hidden bg-neutral-900">
                         {featuredPost.image ? (
                           <ImageWithFallback

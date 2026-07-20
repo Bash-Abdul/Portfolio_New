@@ -319,40 +319,33 @@
 //   );
 // }
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
-import { X, Calendar, Code, CheckCircle, Lightbulb, Github, Star, GitFork, TrendingUp, ArrowRight, AlertCircle, Wrench, Plus } from "lucide-react";
+import { motion as Motion, AnimatePresence } from "motion/react";
+import { X, Calendar, Code, CheckCircle, Lightbulb, Github, TrendingUp, ArrowRight, AlertCircle, Wrench, Plus } from "lucide-react";
 import { Link } from "react-router";
 import { useWeeklyLogsLatest, useWeeklyLogs } from "../../hooks/useWeeklyLogs";
-
-const mockRepos = [
-  {
-    name: "portfolio-v2",
-    description: "Modern portfolio website built with React, TypeScript, and Tailwind CSS",
-    stars: 42,
-    forks: 8,
-    language: "TypeScript",
-    lastUpdate: "2 days ago"
-  },
-  {
-    name: "dashboard-system",
-    description: "Comprehensive dashboard with project management and analytics",
-    stars: 28,
-    forks: 5,
-    language: "React",
-    lastUpdate: "5 days ago"
-  }
-];
+import { useGithub } from "../../hooks/useGithub";
 
 export function ActivityFeed({ isOpen, onClose }) {
   const { data, isLoading } = useWeeklyLogsLatest()
   const { data: logsData } = useWeeklyLogs()
+  const { data: githubData, isLoading: githubLoading, isError: githubError } = useGithub()
   const latestLog = data?.data ?? null
-  const [githubRepos] = useState(mockRepos)
   const weeksLogged = logsData?.data?.length ?? 0
+  const totalStars = githubData?.data?.profile?.total_stars
+
+  const githubActivity = githubData?.data?.activity ?? []
+  const githubRepos = githubActivity.slice(0, 2).map(event => ({
+    name: event.repo,
+    description: event.description,
+    lastUpdate: event.timestamp
+  }))
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
+    const value = /^\d{4}-\d{2}-\d{2}$/.test(dateString)
+      ? `${dateString}T00:00:00`
+      : dateString
+
+    return new Date(value).toLocaleDateString("en-US", {
       month: "short",
       day: "numeric"
     })
@@ -362,7 +355,7 @@ export function ActivityFeed({ isOpen, onClose }) {
     <AnimatePresence>
       {isOpen && (
         <>
-          <motion.div
+          <Motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -370,7 +363,7 @@ export function ActivityFeed({ isOpen, onClose }) {
             className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
           />
 
-          <motion.div
+          <Motion.div
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -483,35 +476,35 @@ export function ActivityFeed({ isOpen, onClose }) {
                     <Github className="w-5 h-5 text-neutral-900 dark:text-white" />
                     <h3 className="text-lg font-bold dark:text-white">GitHub Activity</h3>
                   </div>
-                  <div className="grid md:grid-cols-2 gap-4">
-                    {githubRepos.map((repo, index) => (
-                      <motion.div
-                        key={index}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.1 }}
-                        className="bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 p-4 hover:border-black dark:hover:border-white transition-colors"
-                      >
-                        <h4 className="font-bold dark:text-white mb-2">{repo.name}</h4>
-                        <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-3">{repo.description}</p>
-                        <div className="flex items-center gap-4 text-xs text-neutral-600 dark:text-neutral-400">
-                          <div className="flex items-center gap-1">
-                            <Star className="w-3 h-3" />
-                            <span>{repo.stars}</span>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <GitFork className="w-3 h-3" />
-                            <span>{repo.forks}</span>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <div className="w-2 h-2 bg-blue-500 rounded-full" />
-                            <span>{repo.language}</span>
-                          </div>
-                        </div>
-                        <div className="text-xs text-neutral-500 mt-2">Updated {repo.lastUpdate}</div>
-                      </motion.div>
-                    ))}
-                  </div>
+                  {githubLoading ? (
+                    <div className="flex items-center justify-center py-8">
+                      <div className="w-5 h-5 border-2 border-black dark:border-white border-t-transparent rounded-full animate-spin" />
+                    </div>
+                  ) : githubError ? (
+                    <div className="text-sm text-neutral-500 dark:text-neutral-400 py-4 text-center">
+                      GitHub activity is temporarily unavailable.
+                    </div>
+                  ) : githubActivity.length === 0 ? (
+                    <div className="text-sm text-neutral-500 dark:text-neutral-400 py-4 text-center">
+                      No recent GitHub activity.
+                    </div>
+                  ) : (
+                    <div className="grid md:grid-cols-2 gap-4">
+                      {githubRepos.map((repo, index) => (
+                        <Motion.div
+                          key={index}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: index * 0.1 }}
+                          className="bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 p-4 hover:border-black dark:hover:border-white transition-colors"
+                        >
+                          <h4 className="font-bold dark:text-white mb-2">{repo.name}</h4>
+                          <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-3">{repo.description}</p>
+                          <div className="text-xs text-neutral-500 mt-2">Updated {repo.lastUpdate}</div>
+                        </Motion.div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 {/* Quick Stats */}
@@ -530,7 +523,7 @@ export function ActivityFeed({ isOpen, onClose }) {
                       <div className="text-xs text-neutral-600 dark:text-neutral-400 mt-1">Blog Posts</div>
                     </div>
                     <div className="bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 p-4 text-center">
-                      <div className="text-2xl font-bold dark:text-white">70+</div>
+                      <div className="text-2xl font-bold dark:text-white">{totalStars ?? "—"}</div>
                       <div className="text-xs text-neutral-600 dark:text-neutral-400 mt-1">GitHub Stars</div>
                     </div>
                     <div className="bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 p-4 text-center">
@@ -556,7 +549,7 @@ export function ActivityFeed({ isOpen, onClose }) {
                 </Link>
               </p>
             </div>
-          </motion.div>
+          </Motion.div>
         </>
       )}
     </AnimatePresence>

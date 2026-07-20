@@ -1,22 +1,8 @@
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
 
 export function ThemeToggle({ isScrolled, isHomePage }) {
   const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return (
-      <button className="w-10 h-10 flex items-center justify-center" aria-label="Toggle theme">
-        <div className="w-5 h-5" />
-      </button>
-    );
-  }
 
   return (
     <button

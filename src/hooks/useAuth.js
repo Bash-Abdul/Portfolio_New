@@ -1,4 +1,4 @@
-import { useQuery, useMutation } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { get, post } from '../lib/api'
 import { useNavigate } from 'react-router'
 
@@ -20,6 +20,7 @@ export function useMe() {
   
   export function useLogout() {
     const navigate = useNavigate()
+    const queryClient = useQueryClient()
     return useMutation({
       mutationFn: () => post('/api/auth/logout'),
       // onSuccess: () => {

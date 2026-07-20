@@ -1,77 +1,11 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { DashboardLayout } from "../../components/dashboard/DashboardLayout";
 import { StatusBadge } from "../../components/dashboard/StatusBadge";
 import { SyncButton } from "../../components/dashboard/SyncButton";
 import { Tabs } from "../../components/dashboard/Tabs";
-import { Github, GitPullRequest, GitCommit, Tag, ChevronDown, ChevronUp } from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
-
-// type ActivityEvent = {
-//   id: string;
-//   repo: string;
-//   type: "push" | "pr" | "release";
-//   timestamp: string;
-//   date: string;
-// };
-
-// type Release = {
-//   id: string;
-//   repo: string;
-//   version: string;
-//   title: string;
-//   date: string;
-//   body: string;
-// };
-
-const mockActivity = [
-  {
-    id: "1",
-    repo: "bashir/portfolio-v2",
-    type: "push",
-    timestamp: "2 hours ago",
-    date: "2024-03-03",
-  },
-  {
-    id: "2",
-    repo: "bashir/dashboard-app",
-    type: "pr",
-    timestamp: "5 hours ago",
-    date: "2024-03-03",
-  },
-  {
-    id: "3",
-    repo: "bashir/ai-chat",
-    type: "release",
-    timestamp: "1 day ago",
-    date: "2024-03-02",
-  },
-  {
-    id: "4",
-    repo: "bashir/task-manager",
-    type: "push",
-    timestamp: "2 days ago",
-    date: "2024-03-01",
-  },
-];
-
-const mockReleases= [
-  {
-    id: "1",
-    repo: "bashir/portfolio-v2",
-    version: "v2.0.0",
-    title: "Major Redesign",
-    date: "2024-03-01",
-    body: "Complete redesign with new dashboard, improved performance, and modern UI components. Includes dark mode support and mobile responsiveness.",
-  },
-  {
-    id: "2",
-    repo: "bashir/ai-chat",
-    version: "v1.5.0",
-    title: "OpenAI GPT-4 Integration",
-    date: "2024-02-28",
-    body: "Added GPT-4 support, streaming responses, and improved context handling.",
-  },
-];
+import { Github, GitPullRequest, GitCommit, Tag, ChevronDown, ChevronUp, Loader2 } from "lucide-react";
+import { motion as Motion, AnimatePresence } from "motion/react";
+import { useGithub } from "../../../hooks/useGithub";
 
 const eventTypeConfig = {
   push: { icon: GitCommit, variant: "active", label: "Push" },
@@ -82,20 +16,25 @@ const eventTypeConfig = {
 export default function DashboardGithub() {
   const [activeTab, setActiveTab] = useState("Activity");
   const [expandedRelease, setExpandedRelease] = useState(null);
-  const [lastSynced] = useState("1 hour ago");
+  const { data, isLoading, isError, dataUpdatedAt, refetch } = useGithub();
 
   const handleSync = async () => {
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    const result = await refetch();
+    if (result.error) throw result.error;
   };
 
   const actions = <SyncButton onSync={handleSync} />;
 
-  // Group activities by date
-  const groupedActivity = mockActivity.reduce((acc, event) => {
-    if (!acc[event.date]) acc[event.date] = [];
-    acc[event.date].push(event);
+  const githubData = data?.data ?? { profile: null, activity: [], releases: [] };
+  const activity = useMemo(() => githubData.activity ?? [], [githubData.activity]);
+  const releases = githubData.releases ?? [];
+
+  const groupedActivity = useMemo(() => activity.reduce((acc, event) => {
+    const date = event.date || "Recently updated";
+    if (!acc[date]) acc[date] = [];
+    acc[date].push(event);
     return acc;
-  }, {});
+  }, {}), [activity]);
 
   return (
     <DashboardLayout title="GitHub" actions={actions}>
@@ -103,7 +42,16 @@ export default function DashboardGithub() {
         {/* Last Synced */}
         <div className="flex items-center justify-between">
           <p className="text-sm text-neutral-600 dark:text-neutral-400">
-            Last synced: <span className="font-medium dark:text-white">{lastSynced}</span>
+            Last synced:{" "}
+            <span className="font-medium dark:text-white">
+              {isLoading
+                ? "Loading..."
+                : isError
+                  ? "Sync failed"
+                  : dataUpdatedAt
+                    ? new Date(dataUpdatedAt).toLocaleString()
+                    : "Not synced"}
+            </span>
           </p>
         </div>
 
@@ -112,18 +60,31 @@ export default function DashboardGithub() {
 
         {/* Activity Tab */}
         {activeTab === "Activity" && (
-          <motion.div
+          <Motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.3 }}
             className="space-y-6"
           >
-            {Object.entries(groupedActivity).map(([date, events]) => (
+            {isLoading ? (
+              <div className="flex items-center justify-center py-12 text-neutral-500">
+                <Loader2 className="w-6 h-6 animate-spin mr-3" />
+                Loading GitHub activity...
+              </div>
+            ) : isError ? (
+              <div className="rounded border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 p-6 text-sm text-neutral-600 dark:text-neutral-400">
+                GitHub data is temporarily unavailable. Please try again in a moment.
+              </div>
+            ) : activity.length === 0 ? (
+              <div className="rounded border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 p-6 text-sm text-neutral-600 dark:text-neutral-400">
+                No recent GitHub activity found.
+              </div>
+            ) : Object.entries(groupedActivity).map(([date, events]) => (
               <div key={date} className="space-y-3">
                 <h3 className="text-sm font-medium text-neutral-500 dark:text-neutral-400">{date}</h3>
                 <div className="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 divide-y divide-neutral-200 dark:divide-neutral-700">
                   {events.map((event) => {
-                    const config = eventTypeConfig[event.type];
+                    const config = eventTypeConfig[event.type] || eventTypeConfig.push;
                     const Icon = config.icon;
                     return (
                       <div
@@ -148,18 +109,31 @@ export default function DashboardGithub() {
                 </div>
               </div>
             ))}
-          </motion.div>
+          </Motion.div>
         )}
 
         {/* Releases Tab */}
         {activeTab === "Releases" && (
-          <motion.div
+          <Motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.3 }}
             className="space-y-4"
           >
-            {mockReleases.map((release) => {
+            {isLoading ? (
+              <div className="flex items-center justify-center py-12 text-neutral-500">
+                <Loader2 className="w-6 h-6 animate-spin mr-3" />
+                Loading releases...
+              </div>
+            ) : isError ? (
+              <div className="rounded border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 p-6 text-sm text-neutral-600 dark:text-neutral-400">
+                Releases are temporarily unavailable.
+              </div>
+            ) : releases.length === 0 ? (
+              <div className="rounded border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 p-6 text-sm text-neutral-600 dark:text-neutral-400">
+                No releases found.
+              </div>
+            ) : releases.map((release) => {
               const isExpanded = expandedRelease === release.id;
               return (
                 <div
@@ -192,7 +166,7 @@ export default function DashboardGithub() {
 
                   <AnimatePresence>
                     {isExpanded && (
-                      <motion.div
+                      <Motion.div
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: "auto", opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
@@ -204,13 +178,13 @@ export default function DashboardGithub() {
                             {release.body}
                           </p>
                         </div>
-                      </motion.div>
+                      </Motion.div>
                     )}
                   </AnimatePresence>
                 </div>
               );
             })}
-          </motion.div>
+          </Motion.div>
         )}
       </div>
     </DashboardLayout>

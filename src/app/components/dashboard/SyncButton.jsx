@@ -18,7 +18,7 @@ export function SyncButton({ onSync, label = "Sync Now" }) {
       await onSync();
       setState("success");
       setTimeout(() => setState("idle"), 2000);
-    } catch (error) {
+    } catch {
       setState("idle");
     }
   };

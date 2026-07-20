@@ -111,7 +111,7 @@ import { StatCard } from '../../components/dashboard/StatCard'
 import { FolderKanban, FileText, Briefcase, CheckCircle, Plus, Loader2 } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useProjectsCount } from '../../../hooks/useProjects'
-import { useBlogCount, useLastSynced, useSyncBlog, useBlogPosts } from '../../../hooks/useBlogs'
+import { useBlogCount, useSyncBlog, useBlogPosts } from '../../../hooks/useBlogs'
 import { useRecentActivity } from '../../../hooks/useActivity'
 import { useJobCounts } from '../../../hooks/useJobs'
 import { useBoardCounts } from '../../../hooks/useBoard'
@@ -208,7 +208,7 @@ export default function DashboardOverview() {
               </p>
             ) : (
               <div className="space-y-4">
-                {recentActivity.map((activity, index) => (
+                {recentActivity.map((activity) => (
                   <div
                     key={activity.id}
                     className="flex gap-4 pb-4 border-b border-neutral-100 dark:border-neutral-700 last:border-0 last:pb-0"

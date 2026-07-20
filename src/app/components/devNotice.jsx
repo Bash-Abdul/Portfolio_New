@@ -1,17 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import { X } from 'lucide-react'
 
 export function DevNotice() {
-  const [isVisible, setIsVisible] = useState(false)
-
-  useEffect(() => {
-    // check localStorage on mount — if flag isn't set, show the notice
-    // localStorage persists across page refreshes and browser sessions
-    // but is specific to each browser/device — different visitors each see it once
-    const seen = localStorage.getItem('dev_notice_seen')
-    if (!seen) setIsVisible(true)
-  }, []) // empty dependency array — only runs once on mount
+  const [isVisible, setIsVisible] = useState(() =>
+    typeof window !== 'undefined' && !window.localStorage.getItem('dev_notice_seen')
+  )
 
   function handleClose() {
     // set the flag so it never shows again on this browser
