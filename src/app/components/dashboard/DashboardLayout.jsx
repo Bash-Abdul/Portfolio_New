@@ -201,25 +201,26 @@ export function DashboardLayout({ children, title, actions }) {
       </AnimatePresence>
 
       {/* Main Content */}
-      <div className="lg:ml-60">
+      <div className="min-w-0 lg:ml-60">
         {/* Top Bar */}
         <header className="bg-white dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800 sticky top-0 z-30">
-          <div className="px-6 py-4 flex items-center justify-between">
-            <div className="flex items-center gap-4">
+          <div className="px-4 sm:px-6 py-4 flex flex-wrap items-center justify-between gap-3">
+            <div className="flex min-w-0 items-center gap-2 sm:gap-4">
               <button
                 onClick={() => setIsSidebarOpen(true)}
+                aria-label="Open navigation"
                 className="lg:hidden p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
               >
                 <Menu className="w-5 h-5 dark:text-white" />
               </button>
-              <h1 className="text-2xl md:text-3xl font-bold dark:text-white">{title}</h1>
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold break-words dark:text-white">{title}</h1>
             </div>
-            {actions && <div className="flex items-center gap-3">{actions}</div>}
+            {actions && <div className="flex w-full flex-wrap items-center gap-3 sm:w-auto">{actions}</div>}
           </div>
         </header>
 
         {/* Page Content */}
-        <main className="p-6">{children}</main>
+        <main className="min-w-0 p-4 sm:p-6">{children}</main>
       </div>
       <Chatbot />
     </div>

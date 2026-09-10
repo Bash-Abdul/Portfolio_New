@@ -428,12 +428,12 @@ export default function DashboardProjects() {
             className="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 overflow-hidden"
           >
             {/* Table Header */}
-            <div className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-neutral-200 dark:border-neutral-700 text-sm font-medium text-neutral-600 dark:text-neutral-400">
+            <div className="hidden xl:grid grid-cols-12 gap-4 px-6 py-4 border-b border-neutral-200 dark:border-neutral-700 text-sm font-medium text-neutral-600 dark:text-neutral-400">
               <div className="col-span-3">Title</div>
               <div className="col-span-3">Technologies</div>
-              <div className="col-span-2">Status</div>
+              <div className="col-span-1 xl:col-span-2 min-w-0">Status</div>
               <div className="col-span-1">Featured</div>
-              <div className="col-span-2">Last Updated</div>
+              <div className="col-span-1 xl:col-span-2 min-w-0">Last Updated</div>
               <div className="col-span-1">Actions</div>
             </div>
 
@@ -445,30 +445,40 @@ export default function DashboardProjects() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: index * 0.05 }}
-                  className="grid grid-cols-12 gap-4 px-6 py-4 hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors"
+                  className="grid grid-cols-2 xl:grid-cols-12 gap-4 p-4 sm:p-6 xl:py-4 hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors"
                 >
-                  <div className="col-span-3 font-medium dark:text-white">{project.title}</div>
+                  <div className="col-span-2 xl:col-span-3 min-w-0 break-words text-lg xl:text-base font-medium dark:text-white">{project.title}</div>
 
-                  <div className="col-span-3 flex gap-2 flex-wrap">
-                    {project.technologies?.map((tech) => (
-                      <span
-                        key={tech}
-                        className="px-2 py-0.5 bg-neutral-100 dark:bg-neutral-700 text-xs dark:text-neutral-300"
-                      >
-                        {tech}
-                      </span>
-                    ))}
+                  <div className="col-span-2 xl:col-span-3 min-w-0 self-start">
+                    <span className="block xl:hidden mb-2 text-xs text-neutral-500 dark:text-neutral-400">Technologies</span>
+                    {project.technologies?.length ? (
+                      <ul aria-label={`${project.title} technologies`} className="m-0 flex list-none flex-wrap items-start gap-1.5 p-0">
+                        {project.technologies.map((tech) => (
+                          <li
+                            key={tech}
+                            className="max-w-full rounded-md border border-neutral-200 bg-neutral-50 px-2.5 py-1 text-xs font-medium leading-5 text-neutral-700 [overflow-wrap:anywhere] dark:border-neutral-600 dark:bg-neutral-900/40 dark:text-neutral-300"
+                          >
+                            {tech}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <span className="text-sm text-neutral-500 dark:text-neutral-400">No technologies added</span>
+                    )}
                   </div>
 
-                  <div className="col-span-2">
+                  <div className="col-span-1 xl:col-span-2 min-w-0">
+                    <span className="block xl:hidden mb-1 text-xs text-neutral-500 dark:text-neutral-400">Status</span>
                     <StatusBadge variant={project.status}>{project.status}</StatusBadge>
                   </div>
 
                   <div className="col-span-1">
                     <button
                       onClick={() => handleToggleFeatured(project)}
+                      aria-label={project.featured ? 'Unfeature project' : 'Feature project'}
+                      aria-pressed={Boolean(project.featured)}
                       disabled={updateProject.isPending || !isAdmin}
-                      className="p-1 transition-colors"
+                      className="min-h-11 min-w-11 inline-flex items-center justify-center transition-colors"
                       title={project.featured ? 'Unfeature' : 'Feature'}
                     >
                       <Star
@@ -478,25 +488,26 @@ export default function DashboardProjects() {
                             : 'text-neutral-300 dark:text-neutral-600'
                         } disabled:opacity-50 disabled:cursor-not-allowed`}
                       />
+                      <span className="xl:hidden ml-2 text-sm dark:text-white">Featured</span>
                     </button>
                   </div>
 
-                  <div className="col-span-2 text-sm text-neutral-600 dark:text-neutral-400">
-                    {new Date(project.updated_at).toLocaleDateString()}
+                  <div className="col-span-2 xl:col-span-2 min-w-0 text-sm text-neutral-600 dark:text-neutral-400">
+                    <span className="xl:hidden">Updated: </span>{new Date(project.updated_at).toLocaleDateString()}
                   </div>
 
-                  <div className="col-span-1 flex gap-2">
+                  <div className="col-span-2 xl:col-span-1 flex flex-wrap gap-2">
                     <button
                     disabled={!isAdmin}
-                      onClick={() => openEditModal(project)}
-                      className="p-1.5 hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      aria-label={`Edit ${project.title}`} onClick={() => openEditModal(project)}
+                      className="min-h-11 min-w-11 inline-flex items-center justify-center hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <Edit className="w-4 h-4 dark:text-white" />
                     </button>
                     <button
-                      onClick={() => handleDelete(project.id)}
+                      aria-label={`Delete ${project.title}`} onClick={() => handleDelete(project.id)}
                       disabled={deleteProject.isPending || !isAdmin}
-                      className="p-1.5 hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="min-h-11 min-w-11 inline-flex items-center justify-center hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <Trash2 className="w-4 h-4 text-red-600" />
                     </button>
@@ -538,7 +549,7 @@ export default function DashboardProjects() {
               </div>
             )}
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium mb-2 dark:text-white">Title *</label>
                 <input
@@ -639,7 +650,7 @@ export default function DashboardProjects() {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium mb-2 dark:text-white">Live URL</label>
                 <input

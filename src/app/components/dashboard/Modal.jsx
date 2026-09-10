@@ -33,8 +33,8 @@ export function Modal({ isOpen, onClose, title, children, footer }) {
               className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col"
             >
               {/* Header */}
-              <div className="flex items-center justify-between p-6 border-b border-neutral-200 dark:border-neutral-700">
-                <h2 className="text-2xl font-bold dark:text-white">{title}</h2>
+              <div className="flex items-center justify-between gap-3 p-4 sm:p-6 border-b border-neutral-200 dark:border-neutral-700">
+                <h2 className="text-xl sm:text-2xl font-bold dark:text-white">{title}</h2>
                 <button
                   onClick={onClose}
                   className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
@@ -44,11 +44,11 @@ export function Modal({ isOpen, onClose, title, children, footer }) {
               </div>
 
               {/* Body */}
-              <div className="flex-1 overflow-y-auto p-6">{children}</div>
+              <div className="flex-1 overflow-y-auto p-4 sm:p-6">{children}</div>
 
               {/* Footer */}
               {footer && (
-                <div className="p-6 border-t border-neutral-200 dark:border-neutral-700 flex justify-end gap-3">
+                <div className="p-4 sm:p-6 border-t border-neutral-200 dark:border-neutral-700 flex flex-wrap justify-end gap-3">
                   {footer}
                 </div>
               )}

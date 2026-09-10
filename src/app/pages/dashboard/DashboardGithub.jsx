@@ -43,7 +43,7 @@ export default function DashboardGithub() {
         <div className="flex items-center justify-between">
           <p className="text-sm text-neutral-600 dark:text-neutral-400">
             Last synced:{" "}
-            <span className="font-medium dark:text-white">
+            <span className="font-medium break-words dark:text-white">
               {isLoading
                 ? "Loading..."
                 : isError
@@ -89,14 +89,14 @@ export default function DashboardGithub() {
                     return (
                       <div
                         key={event.id}
-                        className="px-6 py-4 hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors"
+                        className="px-4 sm:px-6 py-4 hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors"
                       >
-                        <div className="flex items-center gap-4">
+                        <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 sm:gap-4">
                           <div className="p-2 bg-neutral-100 dark:bg-neutral-700">
                             <Icon className="w-5 h-5 dark:text-white" />
                           </div>
-                          <div className="flex-1">
-                            <p className="font-medium dark:text-white">{event.repo}</p>
+                          <div className="flex-1 min-w-0 break-words">
+                            <p className="font-medium break-words dark:text-white">{event.repo}</p>
                             <p className="text-sm text-neutral-600 dark:text-neutral-400">
                               {event.timestamp}
                             </p>
@@ -142,18 +142,18 @@ export default function DashboardGithub() {
                 >
                   <button
                     onClick={() => setExpandedRelease(isExpanded ? null : release.id)}
-                    className="w-full px-6 py-4 flex items-center justify-between hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors"
+                    className="w-full px-4 sm:px-6 py-4 flex items-center justify-between hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors"
                   >
-                    <div className="flex items-center gap-4 flex-1 text-left">
+                    <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 sm:gap-4 flex-1 min-w-0 text-left">
                       <div className="p-2 bg-neutral-100 dark:bg-neutral-700">
                         <Github className="w-5 h-5 dark:text-white" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-3 mb-1">
-                          <p className="font-medium dark:text-white">{release.repo}</p>
+                        <div className="flex flex-wrap items-center gap-3 mb-1">
+                          <p className="font-medium break-words dark:text-white">{release.repo}</p>
                           <StatusBadge variant="published">{release.version}</StatusBadge>
                         </div>
-                        <p className="text-neutral-600 dark:text-neutral-400">{release.title}</p>
+                        <p className="text-neutral-600 dark:text-neutral-400 break-words">{release.title}</p>
                       </div>
                       <p className="text-sm text-neutral-500 dark:text-neutral-500">{release.date}</p>
                     </div>
@@ -173,8 +173,8 @@ export default function DashboardGithub() {
                         transition={{ duration: 0.3 }}
                         className="overflow-hidden"
                       >
-                        <div className="px-6 py-4 border-t border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900">
-                          <p className="text-sm text-neutral-600 dark:text-neutral-300 whitespace-pre-wrap">
+                        <div className="px-4 sm:px-6 py-4 border-t border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900">
+                          <p className="text-sm text-neutral-600 dark:text-neutral-300 whitespace-pre-wrap break-words">
                             {release.body}
                           </p>
                         </div>

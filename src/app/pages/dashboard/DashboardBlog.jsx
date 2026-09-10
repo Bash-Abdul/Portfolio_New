@@ -158,8 +158,8 @@ export default function DashboardBlog() {
 
   const posts = data?.data ?? []
 
-  const lastSynced = posts[0]?.synced_at
-    ? new Date(posts[0].synced_at).toLocaleString()
+  const lastSynced = data?.last_synced_at
+    ? new Date(data.last_synced_at).toLocaleString()
     : 'Never'
 
   async function handleSync() {
@@ -200,7 +200,7 @@ export default function DashboardBlog() {
         </div>
 
         {/* Meta row */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <p className="text-sm text-neutral-600 dark:text-neutral-400">
             Last synced:{' '}
             <span className="font-medium dark:text-white">{lastSynced}</span>
@@ -232,12 +232,12 @@ export default function DashboardBlog() {
             className="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 overflow-hidden"
           >
             {/* Table Header */}
-            <div className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-neutral-200 dark:border-neutral-700 text-sm font-medium text-neutral-600 dark:text-neutral-400">
+            <div className="hidden xl:grid grid-cols-12 gap-4 px-6 py-4 border-b border-neutral-200 dark:border-neutral-700 text-sm font-medium text-neutral-600 dark:text-neutral-400">
               <div className="col-span-1">Cover</div>
               <div className="col-span-5">Title</div>
-              <div className="col-span-2">Category</div>
-              <div className="col-span-2">Published</div>
-              <div className="col-span-2">Actions</div>
+              <div className="col-span-2 min-w-0">Category</div>
+              <div className="col-span-2 min-w-0">Published</div>
+              <div className="col-span-2 min-w-0">Actions</div>
             </div>
 
             {/* Table Body */}
@@ -248,7 +248,7 @@ export default function DashboardBlog() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: index * 0.05 }}
-                  className="grid grid-cols-12 gap-4 px-6 py-4 hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors items-center"
+                  className="grid grid-cols-[4rem_minmax(0,1fr)] xl:grid-cols-12 gap-4 p-4 sm:p-6 xl:py-4 hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors items-center"
                 >
                   {/* Cover */}
                   <div className="col-span-1">
@@ -266,12 +266,12 @@ export default function DashboardBlog() {
                   </div>
 
                   {/* Title */}
-                  <div className="col-span-5 font-medium dark:text-white leading-snug">
+                  <div className="col-span-1 xl:col-span-5 min-w-0 break-words font-medium dark:text-white leading-snug">
                     {post.title}
                   </div>
 
                   {/* Category */}
-                  <div className="col-span-2">
+                  <div className="col-span-2 min-w-0">
                     {post.category ? (
                       <StatusBadge variant="synced">{post.category}</StatusBadge>
                     ) : (
@@ -280,32 +280,32 @@ export default function DashboardBlog() {
                   </div>
 
                   {/* Published date */}
-                  <div className="col-span-2 text-sm text-neutral-600 dark:text-neutral-400">
-                    {post.date
+                  <div className="col-span-2 min-w-0 text-sm text-neutral-600 dark:text-neutral-400">
+                    <span className="xl:hidden">Published: </span>{post.date
                       ? new Date(post.date).toLocaleDateString()
                       : '—'}
                   </div>
 
                   {/* Actions */}
-                  {/* <div className="col-span-2">
+                  {/* <div className="col-span-2 min-w-0">
                     
                       href={post.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-sm hover:underline dark:text-white"
+                      className="inline-flex min-h-11 items-center gap-2 text-sm hover:underline dark:text-white"
                     >
                       View on Hashnode
                       <ExternalLink className="w-4 h-4" />
                     </a>
                   </div> */}
                   {/* Actions */}
-                  <div className="col-span-2">
+                  <div className="col-span-2 min-w-0">
                   <a
                     href={post.url}
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={e => !isAdmin && e.preventDefault()}
-                    className={!isAdmin ? 'opacity-50 cursor-not-allowed pointer-events-none' : "inline-flex items-center gap-2 text-sm hover:underline dark:text-white"}>
+                    className={!isAdmin ? 'opacity-50 cursor-not-allowed pointer-events-none' : "inline-flex min-h-11 items-center gap-2 text-sm hover:underline dark:text-white"}>
                     
                       View on Hashnode
                       <ExternalLink className="w-4 h-4" />

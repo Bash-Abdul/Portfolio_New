@@ -12,7 +12,7 @@ const variantStyles = {
   
     return (
       <span
-        className={`inline-flex items-center px-2.5 py-0.5 text-xs font-medium ${styles}`}
+        className={`inline-flex max-w-full break-words items-center px-2.5 py-0.5 text-xs font-medium ${styles}`}
       >
         {children}
       </span>

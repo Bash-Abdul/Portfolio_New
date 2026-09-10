@@ -34,9 +34,11 @@ export function useSyncBlog() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: () => post('/api/blog/sync'),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['blog'] })
-      queryClient.invalidateQueries({ queryKey: ['activity'] })
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['blog'] }),
+        queryClient.invalidateQueries({ queryKey: ['activity'] })
+      ])
     }
   })
 }

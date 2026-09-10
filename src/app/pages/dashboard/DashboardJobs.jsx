@@ -479,16 +479,16 @@ export default function DashboardJobs() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.05 }}
-                className="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 p-6 hover:border-neutral-400 dark:hover:border-neutral-500 transition-colors"
+                className="bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 p-4 sm:p-6 hover:border-neutral-400 dark:hover:border-neutral-500 transition-colors"
               >
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1 min-w-0">
+                <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
+                  <div className="flex-1 min-w-0 w-full break-words">
                     <div className="flex items-start gap-4 mb-3">
                       <div className="p-3 bg-neutral-100 dark:bg-neutral-700 flex-shrink-0">
                         <Building2 className="w-6 h-6 dark:text-white" />
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-3 mb-1">
+                      <div className="flex-1 min-w-0 w-full break-words">
+                        <div className="flex flex-wrap items-center gap-3 mb-1">
                           <h3 className="text-lg font-bold dark:text-white">{job.position}</h3>
                           <StatusBadge variant={statusConfig[job.status].variant}>
                             {statusConfig[job.status].label}
@@ -529,22 +529,22 @@ export default function DashboardJobs() {
                         href={isAdmin ? job.job_url : ''}
                         target={isAdmin ? "_blank" : ''}
                         rel="noopener noreferrer"
-                        className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
+                        className="min-h-11 min-w-11 inline-flex items-center justify-center p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
                       >
                         <ExternalLink className="w-5 h-5 dark:text-white" />
                       </a>
                     )}
                     <button
-                      onClick={() => handleEdit(job)}
+                      aria-label={`Edit application for ${job.position}`} onClick={() => handleEdit(job)}
                       disabled={!isAdmin}
-                      className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="min-h-11 min-w-11 inline-flex items-center justify-center p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <Edit className="w-5 h-5 dark:text-white" />
                     </button>
                     <button
                       onClick={() => handleDelete(job.id)}
                       disabled={!isAdmin}
-                      className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="min-h-11 min-w-11 inline-flex items-center justify-center p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <Trash2 className="w-5 h-5 text-red-600" />
                     </button>
@@ -581,7 +581,7 @@ export default function DashboardJobs() {
           }
         >
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium mb-2 dark:text-white">Company</label>
                 <input
@@ -603,7 +603,7 @@ export default function DashboardJobs() {
                 />
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium mb-2 dark:text-white">Location</label>
                 <input
@@ -635,7 +635,7 @@ export default function DashboardJobs() {
                 placeholder="https://company.com/careers/job-id"
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium mb-2 dark:text-white">Date Applied</label>
                 <input

@@ -135,8 +135,8 @@ export default function DashboardOverview() {
   const jobCounts = jobCountsData?.data ?? {}
   const boardCounts = boardCountsData?.data ?? {}
 
-  const lastSynced = posts[0]?.synced_at
-    ? new Date(posts[0].synced_at).toLocaleString()
+  const lastSynced = postsData?.last_synced_at
+    ? new Date(postsData.last_synced_at).toLocaleString()
     : 'Never'
 
   const isLoading = loadingProjects || loadingBlog

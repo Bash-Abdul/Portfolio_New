@@ -9,12 +9,12 @@ import { motion } from "motion/react";
 export function Tabs({ tabs, activeTab, onChange }) {
   return (
     <div className="border-b border-neutral-200 dark:border-neutral-700">
-      <div className="flex gap-8">
+      <div className="flex flex-wrap gap-x-5 gap-y-2 sm:gap-x-8">
         {tabs.map((tab) => (
           <button
             key={tab}
             onClick={() => onChange(tab)}
-            className="relative pb-3 text-sm font-medium transition-colors"
+            className="relative min-h-11 pb-3 text-sm font-medium transition-colors"
           >
             <span
               className={
